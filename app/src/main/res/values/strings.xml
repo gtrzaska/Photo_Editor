@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">PhotoEditor</string>
+    <string name="library">Katalog</string>
+    <string name="camera">Kamera</string>
+    <string name="crop">Przytnij</string>
+    <string name="filter">Filtr</string>
+    <string name="rotate">Obróć</string>
+    <string name="horizontal">Horyzont</string>
+    <string name="vertical">Pion</string>
+    <string name="undo">Cofnij</string>
+    <string name="save">Zapisz</string>
+    <string name="saved">Zapisano!</string>
 </resources>
