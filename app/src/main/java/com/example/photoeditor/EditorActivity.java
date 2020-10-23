@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -24,7 +23,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+
 
 public class EditorActivity extends AppCompatActivity {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -32,8 +33,10 @@ public class EditorActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    Bitmap bitmap, previousBitmap;
+    Bitmap bitmap, originalBitmap;
+    ArrayList<Bitmap> history = new ArrayList<Bitmap>();
     boolean isHsvCropHidden = true;
+    boolean isHsvFilterHidden = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,26 +47,25 @@ public class EditorActivity extends AppCompatActivity {
 
         try {
             bitmap = BitmapFactory.decodeStream(openFileInput("myImage"));
-            previousBitmap = bitmap;
+            bitmap= bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            if(bitmap.getWidth() > 1000 || bitmap.getHeight() > 1000) {
+                int x;
+                if(bitmap.getWidth() >= bitmap.getHeight()){
+                    x = 1 + (bitmap.getWidth()/1000);
+                } else {
+                    x = 1 + (bitmap.getHeight()/1000);
+                }
+
+                bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
+
+            }
+
+            originalBitmap = bitmap;
+            history.add(bitmap);
             image.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        View btCrop = findViewById(R.id.btCrop);
-        btCrop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View hsvCrop = findViewById(R.id.hsvCrop);
-                if (isHsvCropHidden) {
-                    isHsvCropHidden = false;
-                    hsvCrop.setTranslationY(hsvCrop.getTranslationY() + (-2) * hsvCrop.getHeight());
-                } else {
-                    isHsvCropHidden = true;
-                    hsvCrop.setTranslationY(hsvCrop.getTranslationY() + (2) * hsvCrop.getHeight());
-                }
-            }
-        });
 
         View btToMenu = findViewById(R.id.btPreviousScreen);
         btToMenu.setOnClickListener(new View.OnClickListener() {
@@ -78,8 +80,10 @@ public class EditorActivity extends AppCompatActivity {
         btUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = previousBitmap;
-                image.setImageBitmap(bitmap);
+                bitmap =  history.get(history.size() - 2);
+                history.remove(history.size() - 1);
+                history.trimToSize();
+                image.setImageBitmap(originalBitmap);
             }
         });
 
@@ -87,7 +91,6 @@ public class EditorActivity extends AppCompatActivity {
         btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                File dir = new File(getExternalFilesDir(null), "PhotoEditor");
                 // Assume block needs to be inside a Try/Catch block.
                 String path = Environment.getExternalStorageDirectory().toString();
                 OutputStream fOut = null;
@@ -97,7 +100,6 @@ public class EditorActivity extends AppCompatActivity {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
-                Log.d("gt-----", path);
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
                 try {
                     fOut.flush();
@@ -123,11 +125,26 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
+        final View btCropMenu = findViewById(R.id.btCropMenu);
+        btCropMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View hsvCrop = findViewById(R.id.hsvCrop);
+                if (isHsvCropHidden) {
+                    isHsvCropHidden = false;
+                    hsvCrop.setTranslationY(hsvCrop.getTranslationY() + (-2) * hsvCrop.getHeight());
+                } else {
+                    isHsvCropHidden = true;
+                    hsvCrop.setTranslationY(hsvCrop.getTranslationY() + (2) * hsvCrop.getHeight());
+                }
+            }
+        });
+
         View btRotate = findViewById(R.id.btRotate);
         btRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                previousBitmap = bitmap;
+                history.add(bitmap);
                 bitmap = CropEditor.rotate(bitmap, 90);
                 image.setImageBitmap(bitmap);
             }
@@ -137,7 +154,7 @@ public class EditorActivity extends AppCompatActivity {
         btFlipVertical.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                previousBitmap = bitmap;
+                history.add(bitmap);
                 bitmap = CropEditor.flip(bitmap, false, true);
                 image.setImageBitmap(bitmap);
             }
@@ -147,50 +164,55 @@ public class EditorActivity extends AppCompatActivity {
         btFlipHorizontal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                previousBitmap = bitmap;
+                history.add(bitmap);
                 bitmap = CropEditor.flip(bitmap, true, false);
                 image.setImageBitmap(bitmap);
             }
         });
-/*
-        View btTest = findViewById(R.id.imageButton);
-        btTest.setOnClickListener(new View.OnClickListener() {
+
+        final View btCrop = findViewById(R.id.btCrop);
+        btCrop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImageView image = findViewById(R.id.ivEditedPhoto);
-                image.setImageBitmap(emboss(bitmap));
-
             }
-        });*/
+        });
 
-    }
-/*
-    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
-        Matrix matrix = new Matrix();
-        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }*/
+        final View btFilterMenu = findViewById(R.id.btFilter);
+        btFilterMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View hsvFilter = findViewById(R.id.hsvFilter);
+                View hsvMenu = findViewById(R.id.hsvMenu);
+                if (isHsvFilterHidden) {
+                    isHsvFilterHidden = false;
+                    hsvFilter.setTranslationY(hsvFilter.getTranslationY() - (hsvMenu.getHeight() + hsvFilter.getHeight() + 2));
+                } else {
+                    isHsvFilterHidden = true;
+                    hsvFilter.setTranslationY(hsvFilter.getTranslationY() + hsvMenu.getHeight() + hsvFilter.getHeight() + 2);
+                }
+            }
+        });
 
-    public static Bitmap emboss(Bitmap src) {
-        double[][] EmbossConfig = new double[][]{
-                {-1, 0, -1},
-                {0, 4, 0},
-                {-1, 0, -1}
-        };
-        ConvolutionMatrix convMatrix = new ConvolutionMatrix(3);
-        convMatrix.applyConfig(EmbossConfig);
-        convMatrix.Factor = 1;
-        convMatrix.Offset = 127;
-        return ConvolutionMatrix.computeConvolution3x3(src, convMatrix);
-    }
+        View btBright = findViewById(R.id.btBright);
+        btBright.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                history.add(bitmap);
+                bitmap = Filters.brightness(bitmap, 25);
+                image.setImageBitmap(bitmap);
+            }
+        });
 
+        View btGrey = findViewById(R.id.btGrey);
+        btGrey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                history.add(bitmap);
+                bitmap = Filters.grey(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
 
-    private static Bitmap rotateImage(Bitmap img, int degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-        img.recycle();
-        return rotatedImg;
     }
 
     public static void verifyStoragePermissions(Activity activity) {

@@ -10,4 +10,9 @@
     <string name="undo">Cofnij</string>
     <string name="save">Zapisz</string>
     <string name="saved">Zapisano!</string>
+    <string name="collage">Kolaż</string>
+    <string name="gray">Szary</string>
+    <string name="light">Jasny</string>
+    <string name="adjust">Dostosuj</string>
+    <string name="text">Tekst</string>
 </resources>

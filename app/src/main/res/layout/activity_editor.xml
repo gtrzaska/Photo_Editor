@@ -29,13 +29,13 @@
             android:id="@+id/btUndo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="36dp"
             android:clickable="true"
             android:text="@string/undo"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
-            android:textSize="30sp"
+            android:textSize="25sp"
             app:layout_constraintEnd_toStartOf="@+id/btSave"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,13 +43,13 @@
             android:id="@+id/btSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
             android:clickable="true"
             android:text="@string/save"
             android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="30sp"
+            android:textColor="#0E4BF0"
+            android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -63,11 +63,12 @@
         app:srcCompat="@android:color/transparent" />
 
     <HorizontalScrollView
+        android:id="@+id/hsvMenu"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="0dp"
-        android:fillViewport="true"
+        android:fillViewport="false"
         android:measureAllChildren="false"
         android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,8 +82,8 @@
             android:paddingTop="7dp">
 
             <Button
-                android:id="@+id/btCrop"
-                android:layout_width="72dp"
+                android:id="@+id/btCropMenu"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#02FDFDFD"
@@ -92,7 +93,7 @@
 
             <Button
                 android:id="@+id/btFilter"
-                android:layout_width="64dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#00FFFFFF"
@@ -101,28 +102,28 @@
                 android:textColor="#F8F7F1F1" />
 
             <Button
-                android:id="@+id/button6"
-                android:layout_width="64dp"
+                android:id="@+id/btAdjust"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="Test"
+                android:drawableTop="@drawable/adjust"
+                android:text="@string/adjust"
                 android:textColor="#F8F7F1F1" />
 
             <Button
-                android:id="@+id/button7"
-                android:layout_width="64dp"
+                android:id="@+id/btText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="Test"
+                android:drawableTop="@drawable/text"
+                android:text="@string/text"
                 android:textColor="#F8F7F1F1" />
 
             <Button
                 android:id="@+id/button8"
-                android:layout_width="64dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#00FFFFFF"
@@ -132,27 +133,7 @@
 
             <Button
                 android:id="@+id/button9"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="Test"
-                android:textColor="#F8F7F1F1" />
-
-            <Button
-                android:id="@+id/button10"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="Test"
-                android:textColor="#F8F7F1F1" />
-
-            <Button
-                android:id="@+id/button11"
-                android:layout_width="64dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#00FFFFFF"
@@ -209,16 +190,57 @@
                 android:textColor="#F8F7F1F1" />
 
             <Button
-                android:id="@+id/b2"
+                android:id="@+id/btCrop"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="Filtr"
+                android:drawableTop="@drawable/crop"
+                android:text="@string/crop"
                 android:textColor="#F8F7F1F1" />
 
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/hsvFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-92dp"
+        android:fillViewport="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="505dp"
+            android:layout_height="92dp"
+            android:background="#00FFFFFF"
+            android:orientation="horizontal"
+            android:paddingTop="7dp">
+
+            <Button
+                android:id="@+id/btBright"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#00090808"
+                android:drawableTop="@drawable/bright_filter"
+                android:text="@string/light"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btGrey"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#00090808"
+                android:drawableTop="@drawable/grey_filter"
+                android:text="@string/gray"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
 </LinearLayout>
