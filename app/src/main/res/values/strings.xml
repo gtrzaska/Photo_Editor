@@ -15,4 +15,6 @@
     <string name="light">Jasny</string>
     <string name="adjust">Dostosuj</string>
     <string name="text">Tekst</string>
+    <string name="brightness">Jasność</string>
+    <string name="sepia">Sepia</string>
 </resources>

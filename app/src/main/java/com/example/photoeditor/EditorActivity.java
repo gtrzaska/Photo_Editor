@@ -10,9 +10,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -36,24 +37,27 @@ public class EditorActivity extends AppCompatActivity {
     Bitmap bitmap, originalBitmap;
     ArrayList<Bitmap> history = new ArrayList<Bitmap>();
     boolean isHsvCropHidden = true;
+    boolean isHsvAdjustHidden = true;
     boolean isHsvFilterHidden = true;
+    boolean isBrightnessSeekBarHidden = true;
+    ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
         verifyStoragePermissions(EditorActivity.this);
-        final ImageView image = findViewById(R.id.ivEditedPhoto);
+        image = findViewById(R.id.ivEditedPhoto);
 
         try {
             bitmap = BitmapFactory.decodeStream(openFileInput("myImage"));
-            bitmap= bitmap.copy(Bitmap.Config.ARGB_8888, true);
-            if(bitmap.getWidth() > 1000 || bitmap.getHeight() > 1000) {
+            bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            if (bitmap.getWidth() > 1000 || bitmap.getHeight() > 1000) {
                 int x;
-                if(bitmap.getWidth() >= bitmap.getHeight()){
-                    x = 1 + (bitmap.getWidth()/1000);
+                if (bitmap.getWidth() >= bitmap.getHeight()) {
+                    x = 2 + (bitmap.getWidth() / 1000);
                 } else {
-                    x = 1 + (bitmap.getHeight()/1000);
+                    x = 2 + (bitmap.getHeight() / 1000);
                 }
 
                 bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
@@ -66,6 +70,22 @@ public class EditorActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        View btCompare = findViewById(R.id.btCompare);
+        btCompare.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    image.setImageBitmap(originalBitmap);
+                }
+
+                if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    image.setImageBitmap(bitmap);
+                }
+                return false;
+            }
+        });
 
         View btToMenu = findViewById(R.id.btPreviousScreen);
         btToMenu.setOnClickListener(new View.OnClickListener() {
@@ -80,10 +100,12 @@ public class EditorActivity extends AppCompatActivity {
         btUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap =  history.get(history.size() - 2);
-                history.remove(history.size() - 1);
-                history.trimToSize();
-                image.setImageBitmap(originalBitmap);
+                if (history.size() > 1) {
+                    bitmap = history.get(history.size() - 2);
+                    history.remove(history.size() - 1);
+                    history.trimToSize();
+                    image.setImageBitmap(bitmap);
+                }
             }
         });
 
@@ -131,11 +153,12 @@ public class EditorActivity extends AppCompatActivity {
             public void onClick(View view) {
                 View hsvCrop = findViewById(R.id.hsvCrop);
                 if (isHsvCropHidden) {
+                    closeMenu();
                     isHsvCropHidden = false;
-                    hsvCrop.setTranslationY(hsvCrop.getTranslationY() + (-2) * hsvCrop.getHeight());
+                    hsvCrop.setTranslationY((-2) * hsvCrop.getHeight());
                 } else {
                     isHsvCropHidden = true;
-                    hsvCrop.setTranslationY(hsvCrop.getTranslationY() + (2) * hsvCrop.getHeight());
+                    hsvCrop.setTranslationY(0);
                 }
             }
         });
@@ -184,11 +207,12 @@ public class EditorActivity extends AppCompatActivity {
                 View hsvFilter = findViewById(R.id.hsvFilter);
                 View hsvMenu = findViewById(R.id.hsvMenu);
                 if (isHsvFilterHidden) {
+                    closeMenu();
                     isHsvFilterHidden = false;
-                    hsvFilter.setTranslationY(hsvFilter.getTranslationY() - (hsvMenu.getHeight() + hsvFilter.getHeight() + 2));
+                    hsvFilter.setTranslationY((-1) * (hsvMenu.getHeight() + hsvFilter.getHeight() + 2));
                 } else {
                     isHsvFilterHidden = true;
-                    hsvFilter.setTranslationY(hsvFilter.getTranslationY() + hsvMenu.getHeight() + hsvFilter.getHeight() + 2);
+                    hsvFilter.setTranslationY(0);
                 }
             }
         });
@@ -197,8 +221,8 @@ public class EditorActivity extends AppCompatActivity {
         btBright.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                bitmap = Filters.brightness(bitmap, 15);
                 history.add(bitmap);
-                bitmap = Filters.brightness(bitmap, 25);
                 image.setImageBitmap(bitmap);
             }
         });
@@ -207,9 +231,80 @@ public class EditorActivity extends AppCompatActivity {
         btGrey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                history.add(bitmap);
                 bitmap = Filters.grey(bitmap);
+                history.add(bitmap);
                 image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btSepia = findViewById(R.id.btSepia);
+        btSepia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = Filters.sepia(bitmap);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        final View btAdjustMenu = findViewById(R.id.btAdjustMenu);
+        btAdjustMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View hsvAdjust = findViewById(R.id.hsvAdjust);
+                if (isHsvAdjustHidden) {
+                    closeMenu();
+                    isHsvAdjustHidden = false;
+                    hsvAdjust.setTranslationY((-2) * hsvAdjust.getHeight());
+                } else {
+                    isHsvAdjustHidden = true;
+                    hsvAdjust.setTranslationY(0);
+                }
+            }
+        });
+
+        View btBrightness = findViewById(R.id.btBrightness);
+        btBrightness.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View adjustBrightness = findViewById(R.id.adjustBrightness);
+                if (isBrightnessSeekBarHidden) {
+                    isBrightnessSeekBarHidden = false;
+                    adjustBrightness.setVisibility(View.VISIBLE);
+                } else {
+                    isBrightnessSeekBarHidden = true;
+                    adjustBrightness.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        View btConfirmBrightness = findViewById(R.id.btConfirmBrightness);
+        btConfirmBrightness.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                history.add(bitmap);
+                closeMenu();
+            }
+        });
+
+        SeekBar sbBrightness;
+        sbBrightness = (SeekBar) findViewById(R.id.sb_brghtness);
+        sbBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                bitmap = Filters.brightness(history.get(history.size() - 1), progress);
+                image.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
@@ -227,6 +322,23 @@ public class EditorActivity extends AppCompatActivity {
                     REQUEST_EXTERNAL_STORAGE
             );
         }
+    }
+
+    public void closeMenu() {
+        bitmap = history.get(history.size() - 1);
+        image.setImageBitmap(bitmap);
+        View hsvFilter = findViewById(R.id.hsvFilter);
+        View hsvCrop = findViewById(R.id.hsvCrop);
+        View hsvAdjust = findViewById(R.id.hsvAdjust);
+        View adjustBrightness = findViewById(R.id.adjustBrightness);
+        isHsvAdjustHidden = true;
+        isHsvFilterHidden = true;
+        isHsvCropHidden = true;
+        isBrightnessSeekBarHidden = true;
+        adjustBrightness.setVisibility(View.INVISIBLE);
+        hsvCrop.setTranslationY(0);
+        hsvAdjust.setTranslationY(0);
+        hsvFilter.setTranslationY(0);
     }
 
 }

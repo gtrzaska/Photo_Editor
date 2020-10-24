@@ -54,6 +54,49 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/adjustBrightness"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <SeekBar
+            android:id="@+id/sb_brghtness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.8"
+            android:backgroundTint="#000000"
+            android:max="255"
+            android:min="-255"
+            android:progressTint="#F3EDED"
+            android:secondaryProgressTint="#FFFFFF"
+            android:thumbTint="#FFFFFF"
+            android:tickMarkTint="#FDFCFC" />
+
+        <ImageView
+            android:id="@+id/btConfirmBrightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.05"
+            app:srcCompat="@drawable/ok" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btCompare"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="-40dp"
+        android:background="@drawable/circle"
+        android:clickable="true"
+        android:drawableTop="@drawable/compare"
+        android:text="" />
+
     <ImageView
         android:id="@+id/ivEditedPhoto"
         android:layout_width="match_parent"
@@ -102,7 +145,7 @@
                 android:textColor="#F8F7F1F1" />
 
             <Button
-                android:id="@+id/btAdjust"
+                android:id="@+id/btAdjustMenu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -220,9 +263,8 @@
 
             <Button
                 android:id="@+id/btBright"
-                android:layout_width="64dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:background="#00090808"
                 android:drawableTop="@drawable/bright_filter"
                 android:text="@string/light"
@@ -231,14 +273,51 @@
 
             <Button
                 android:id="@+id/btGrey"
-                android:layout_width="64dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:background="#00090808"
                 android:drawableTop="@drawable/grey_filter"
                 android:text="@string/gray"
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btSepia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/sepia"
+                android:text="@string/sepia"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/hsvAdjust"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-64dp"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="505dp"
+            android:layout_height="64dp"
+            android:background="#1F1C1C"
+            android:orientation="horizontal"
+            android:paddingTop="7dp">
+
+            <Button
+                android:id="@+id/btBrightness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#02FDFDFD"
+                android:drawableTop="@drawable/brightness"
+                android:text="@string/brightness"
+                android:textColor="#F8F7F1F1" />
 
         </LinearLayout>
     </HorizontalScrollView>
