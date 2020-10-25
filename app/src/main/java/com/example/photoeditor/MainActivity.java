@@ -5,7 +5,6 @@ import androidx.core.content.FileProvider;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -134,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         String fileName = "myImage";//no .png or .jpg needed
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, bytes);
             FileOutputStream fo = openFileOutput(fileName, Context.MODE_PRIVATE);
             fo.write(bytes.toByteArray());
             // remember close file output
