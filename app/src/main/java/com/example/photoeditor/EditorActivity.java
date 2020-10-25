@@ -61,6 +61,7 @@ public class EditorActivity extends AppCompatActivity {
     boolean isHsvAdjustHidden = true;
     boolean isHsvFilterHidden = true;
     boolean isBrightnessSeekBarHidden = true;
+    boolean isContrastSeekBarHidden = true;
     boolean isDrawingEnabled = false;
     ImageView image;
     Bitmap tempBitmap;
@@ -419,6 +420,50 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
+        View btContrast = findViewById(R.id.btContrast);
+        btContrast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View adjustContrast = findViewById(R.id.adjustContrast);
+                if (isContrastSeekBarHidden) {
+                    isContrastSeekBarHidden = false;
+                    adjustContrast.setVisibility(View.VISIBLE);
+                } else {
+                    isContrastSeekBarHidden = true;
+                    adjustContrast.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        View btConfirmContrast = findViewById(R.id.btConfirmContrast);
+        btConfirmContrast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                history.add(bitmap);
+                closeMenu();
+            }
+        });
+
+        SeekBar sbContrast = (SeekBar) findViewById(R.id.sbContrast);
+        sbContrast.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                bitmap = ImageFilters.changeBitmapContrast(history.get(history.size() - 1), progress);
+                image.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         View btBrightness = findViewById(R.id.btBrightness);
         btBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -443,8 +488,7 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
-        SeekBar sbBrightness;
-        sbBrightness = (SeekBar) findViewById(R.id.sb_brghtness);
+        SeekBar sbBrightness = (SeekBar) findViewById(R.id.sb_brghtness);
         sbBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -592,12 +636,15 @@ public class EditorActivity extends AppCompatActivity {
         View hsvCrop = findViewById(R.id.hsvCrop);
         View hsvAdjust = findViewById(R.id.hsvAdjust);
         View adjustBrightness = findViewById(R.id.adjustBrightness);
+        View adjustContrast = findViewById(R.id.adjustContrast);
         View clAdjustBrush = findViewById(R.id.clAdjustBrush);
         isHsvAdjustHidden = true;
         isDrawingEnabled = false;
         isHsvFilterHidden = true;
         isHsvCropHidden = true;
         isBrightnessSeekBarHidden = true;
+        isContrastSeekBarHidden = true;
+        adjustContrast.setVisibility(View.INVISIBLE);
         adjustBrightness.setVisibility(View.INVISIBLE);
         hsvCrop.setTranslationY(0);
         hsvAdjust.setTranslationY(0);

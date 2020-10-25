@@ -59,7 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <SeekBar
             android:id="@+id/sb_brghtness"
@@ -77,6 +77,39 @@
 
         <ImageView
             android:id="@+id/btConfirmBrightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.05"
+            app:srcCompat="@drawable/ok" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/adjustContrast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-29dp"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <SeekBar
+            android:id="@+id/sbContrast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.8"
+            android:backgroundTint="#000000"
+            android:indeterminate="false"
+            android:max="70"
+            android:min="0"
+            android:progress="10"
+            android:progressTint="#F3EDED"
+            android:secondaryProgressTint="#FFFFFF"
+            android:thumbTint="#FFFFFF"
+            android:tickMarkTint="#FDFCFC" />
+
+        <ImageView
+            android:id="@+id/btConfirmContrast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -397,13 +430,24 @@
             android:paddingTop="7dp">
 
             <Button
-                android:id="@+id/btBrightness"
+            android:id="@+id/btBrightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#02FDFDFD"
+            android:drawableTop="@drawable/brightness"
+            android:text="@string/brightness"
+            android:textColor="#F8F7F1F1"
+            android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btContrast"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="#02FDFDFD"
-                android:drawableTop="@drawable/brightness"
-                android:text="@string/brightness"
+                android:drawableTop="@drawable/contrast"
+                android:text="@string/contrast"
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
 

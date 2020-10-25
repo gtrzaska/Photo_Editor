@@ -24,4 +24,5 @@
     <string name="red">Czerwień</string>
     <string name="green">Zieleń</string>
     <string name="draw">Rysuj</string>
+    <string name="contrast">Kontrast</string>
 </resources>
