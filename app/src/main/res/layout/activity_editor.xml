@@ -59,7 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <SeekBar
             android:id="@+id/sb_brghtness"
@@ -97,95 +97,122 @@
         android:drawableTop="@drawable/compare"
         android:text="" />
 
-    <ImageView
-        android:id="@+id/ivEditedPhoto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="533dp"
-        android:layout_weight="1"
-        android:background="#00000000"
-        app:srcCompat="@android:color/transparent" />
+        android:layout_height="586dp">
 
-    <HorizontalScrollView
-        android:id="@+id/hsvMenu"
-        android:layout_width="fill_parent"
+        <ImageView
+            android:id="@+id/ivEditedPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:background="#00000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:color/transparent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="0dp"
-        android:fillViewport="false"
-        android:measureAllChildren="false"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:gravity="bottom">
 
-        <LinearLayout
-            android:layout_width="505dp"
-            android:layout_height="64dp"
-            android:background="#1F1C1C"
-            android:orientation="horizontal"
-            android:paddingTop="7dp">
+        <HorizontalScrollView
+            android:id="@+id/hsvMenu"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="0dp"
+            android:fillViewport="false"
+            android:measureAllChildren="false"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/btCropMenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#02FDFDFD"
-                android:drawableTop="@drawable/resize"
-                android:text="@string/crop"
-                android:textColor="#F8F7F1F1" />
+            <LinearLayout
+                android:layout_width="505dp"
+                android:layout_height="64dp"
+                android:background="#1F1C1C"
+                android:orientation="horizontal"
+                android:paddingTop="7dp">
 
-            <Button
-                android:id="@+id/btFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="@string/filter"
-                android:textColor="#F8F7F1F1" />
+                <Button
+                    android:id="@+id/btCropMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#02FDFDFD"
+                    android:drawableTop="@drawable/resize"
+                    android:text="@string/crop"
+                    android:textColor="#F8F7F1F1"
+                    android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/btAdjustMenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/adjust"
-                android:text="@string/adjust"
-                android:textColor="#F8F7F1F1" />
+                <Button
+                    android:id="@+id/btFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:drawableTop="@drawable/filter"
+                    android:text="@string/filter"
+                    android:textColor="#F8F7F1F1"
+                    android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/btText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/text"
-                android:text="@string/text"
-                android:textColor="#F8F7F1F1" />
+                <Button
+                    android:id="@+id/btAdjustMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:drawableTop="@drawable/adjust"
+                    android:text="@string/adjust"
+                    android:textColor="#F8F7F1F1"
+                    android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/button8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="Test"
-                android:textColor="#F8F7F1F1" />
+                <Button
+                    android:id="@+id/btDraw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:drawableTop="@drawable/drawing"
+                    android:text="@string/draw"
+                    android:textColor="#F8F7F1F1"
+                    android:textSize="12sp" />
 
-            <Button
-                android:id="@+id/button9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/filter"
-                android:text="Test"
-                android:textColor="#F8F7F1F1" />
+                <Button
+                    android:id="@+id/btText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:drawableTop="@drawable/text"
+                    android:text="@string/text"
+                    android:textColor="#F8F7F1F1"
+                    android:textSize="12sp" />
 
-        </LinearLayout>
-    </HorizontalScrollView>
+
+                <Button
+                    android:id="@+id/button9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:drawableTop="@drawable/filter"
+                    android:text="Test"
+                    android:textColor="#F8F7F1F1"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </RelativeLayout>
 
     <HorizontalScrollView
         android:id="@+id/hsvCrop"
@@ -263,7 +290,7 @@
 
             <Button
                 android:id="@+id/btBright"
-                android:layout_width="wrap_content"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:background="#00090808"
                 android:drawableTop="@drawable/bright_filter"
@@ -272,8 +299,18 @@
                 android:textSize="12sp" />
 
             <Button
+                android:id="@+id/btDark"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/dark"
+                android:text="@string/dark"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
                 android:id="@+id/btGrey"
-                android:layout_width="wrap_content"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:background="#00090808"
                 android:drawableTop="@drawable/grey_filter"
@@ -283,11 +320,61 @@
 
             <Button
                 android:id="@+id/btSepia"
-                android:layout_width="wrap_content"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:background="#00090808"
                 android:drawableTop="@drawable/sepia"
                 android:text="@string/sepia"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btSketch"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/sketch"
+                android:text="@string/sketch"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+            android:id="@+id/btNegative"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:background="#00090808"
+            android:drawableTop="@drawable/negative"
+            android:text="@string/negative"
+            android:textColor="#F8F7F1F1"
+            android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btBlueFilter"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/blue_filter"
+                android:text="@string/blue"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btRedFilter"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/red_filter"
+                android:text="@string/red"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btGreenFilter"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/green_filter"
+                android:text="@string/green"
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
 
@@ -317,9 +404,65 @@
                 android:background="#02FDFDFD"
                 android:drawableTop="@drawable/brightness"
                 android:text="@string/brightness"
-                android:textColor="#F8F7F1F1" />
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clAdjustBrush"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginBottom="-64dp">
+
+        <ImageView
+            android:id="@+id/btColorPicker"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/color" />
+
+        <SeekBar
+            android:id="@+id/sbBrushSize"
+            style="@android:style/Widget.DeviceDefault.SeekBar"
+            android:layout_width="260dp"
+            android:layout_height="33dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#000000"
+            android:max="64"
+            android:min="4"
+            android:progress="8"
+            android:progressTint="#F3EDED"
+            android:secondaryProgressTint="#FFFFFF"
+            android:thumbTint="#FFFFFF"
+            android:tickMarkTint="#FDFCFC"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btConfirmBrush"
+            app:layout_constraintStart_toEndOf="@+id/btColorPicker"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btConfirmBrush"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ok" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

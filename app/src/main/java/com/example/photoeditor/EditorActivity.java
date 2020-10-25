@@ -1,17 +1,28 @@
 package com.example.photoeditor;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
@@ -29,6 +40,16 @@ import java.util.Date;
 
 
 public class EditorActivity extends AppCompatActivity {
+
+    float downx = 0;
+    float downy = 0;
+    float upx = 0;
+    float upy = 0;
+    int red = 0;
+    int green = 0;
+    int blue = 255;
+
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -40,8 +61,13 @@ public class EditorActivity extends AppCompatActivity {
     boolean isHsvAdjustHidden = true;
     boolean isHsvFilterHidden = true;
     boolean isBrightnessSeekBarHidden = true;
+    boolean isDrawingEnabled = false;
     ImageView image;
+    Bitmap tempBitmap;
+    Canvas tempCanvas;
+    Paint myRectPaint;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +76,7 @@ public class EditorActivity extends AppCompatActivity {
         image = findViewById(R.id.ivEditedPhoto);
 
         try {
+            int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
             bitmap = BitmapFactory.decodeStream(openFileInput("myImage"));
             bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
             if (bitmap.getWidth() > 1000 || bitmap.getHeight() > 1000) {
@@ -59,33 +86,21 @@ public class EditorActivity extends AppCompatActivity {
                 } else {
                     x = 2 + (bitmap.getHeight() / 1000);
                 }
-
-                bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
-
+                if((bitmap.getWidth() / x) > screenWidth) {
+                    bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
+                } else {
+                    x = bitmap.getWidth() / screenWidth;
+                    bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
+                }
             }
 
             originalBitmap = bitmap;
             history.add(bitmap);
             image.setImageBitmap(bitmap);
+            closeMenu();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        View btCompare = findViewById(R.id.btCompare);
-        btCompare.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    image.setImageBitmap(originalBitmap);
-                }
-
-                if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    image.setImageBitmap(bitmap);
-                }
-                return false;
-            }
-        });
 
         View btToMenu = findViewById(R.id.btPreviousScreen);
         btToMenu.setOnClickListener(new View.OnClickListener() {
@@ -167,8 +182,8 @@ public class EditorActivity extends AppCompatActivity {
         btRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                history.add(bitmap);
                 bitmap = CropEditor.rotate(bitmap, 90);
+                history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
         });
@@ -177,8 +192,8 @@ public class EditorActivity extends AppCompatActivity {
         btFlipVertical.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                history.add(bitmap);
                 bitmap = CropEditor.flip(bitmap, false, true);
+                history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
         });
@@ -187,8 +202,8 @@ public class EditorActivity extends AppCompatActivity {
         btFlipHorizontal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                history.add(bitmap);
                 bitmap = CropEditor.flip(bitmap, true, false);
+                history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
         });
@@ -197,6 +212,12 @@ public class EditorActivity extends AppCompatActivity {
         btCrop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditorActivity.this);
+                ViewGroup viewGroup = findViewById(android.R.id.content);
+                View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.color_picker, viewGroup, false);
+                builder.setView(dialogView);
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
 
@@ -221,7 +242,17 @@ public class EditorActivity extends AppCompatActivity {
         btBright.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = Filters.brightness(bitmap, 15);
+                bitmap = ImageFilters.brightness(bitmap, 15);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btDark = findViewById(R.id.btDark);
+        btDark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.brightness(bitmap, -25);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -231,7 +262,7 @@ public class EditorActivity extends AppCompatActivity {
         btGrey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = Filters.grey(bitmap);
+                bitmap = ImageFilters.grey(bitmap);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -241,9 +272,134 @@ public class EditorActivity extends AppCompatActivity {
         btSepia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = Filters.sepia(bitmap);
+                bitmap = ImageFilters.sepia(bitmap);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btSketch = findViewById(R.id.btSketch);
+        btSketch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.sketch(bitmap);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btNegative = findViewById(R.id.btNegative);
+        btNegative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.negative(bitmap);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btGreenFilter = findViewById(R.id.btGreenFilter);
+        btGreenFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.colorRGB(bitmap, false, true, false);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btRedFilter = findViewById(R.id.btRedFilter);
+        btRedFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.colorRGB(bitmap, true, false, false);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btBlueFilter = findViewById(R.id.btBlueFilter);
+        btBlueFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.colorRGB(bitmap, true, false, true);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btConfirmBrush = findViewById(R.id.btConfirmBrush);
+        btConfirmBrush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                history.add(tempBitmap);
+                closeMenu();
+            }
+        });
+
+        image.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(isDrawingEnabled) {
+                    int action = event.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
+                            downx = event.getX();
+                            downy = event.getY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            upx = event.getX();
+                            upy = event.getY();
+                            tempCanvas.drawLine(downx, downy, upx, upy, myRectPaint);
+                            image.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+                            downx = upx;
+                            downy = upy;
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            upx = event.getX();
+                            upy = event.getY();
+                            Log.v("------", downx + "x" + downy + " - " + upx + "x" + upy);
+                            tempCanvas.drawLine(downx, downy, upx, upy, myRectPaint);
+                            image.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+                            downx = upx;
+                            downy = upy;
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                return true;
+            }
+        });
+
+        View btDraw = findViewById(R.id.btDraw);
+        btDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                View clAdjustBrush = findViewById(R.id.clAdjustBrush);
+                if (isDrawingEnabled) {
+                    isDrawingEnabled = false;
+                    clAdjustBrush.setTranslationY(0);
+                } else {
+                    closeMenu();
+                    isDrawingEnabled = true;
+                    clAdjustBrush.setTranslationY((-2) * clAdjustBrush.getHeight());
+                    View seekBar = findViewById(R.id.sbBrushSize);
+                    seekBar.refreshDrawableState();
+                    myRectPaint = new Paint();
+                    myRectPaint.setStyle(Paint.Style.STROKE);
+                    red = 0; green = 0; blue = 255;
+                    myRectPaint.setColor(Color.rgb(0,0,255));
+                    myRectPaint.setStrokeWidth(8);
+                    myRectPaint.setStrokeCap(Paint.Cap.ROUND);
+                    tempBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
+                    tempCanvas = new Canvas(tempBitmap);
+                    tempCanvas.drawBitmap(bitmap, 0, 0, null);
+                }
             }
         });
 
@@ -293,7 +449,7 @@ public class EditorActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                bitmap = Filters.brightness(history.get(history.size() - 1), progress);
+                bitmap = ImageFilters.brightness(history.get(history.size() - 1), progress);
                 image.setImageBitmap(bitmap);
             }
 
@@ -307,6 +463,111 @@ public class EditorActivity extends AppCompatActivity {
 
             }
         });
+
+
+        SeekBar sbBrushSize = (SeekBar) findViewById(R.id.sbBrushSize);
+        sbBrushSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                myRectPaint.setStrokeWidth(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+        final View btColorPicker = findViewById(R.id.btColorPicker);
+        btColorPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditorActivity.this);
+                ViewGroup viewGroup = findViewById(android.R.id.content);
+                View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.color_picker, viewGroup, false);
+                builder.setView(dialogView);
+                final AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+                View btConfirmColor = alertDialog.findViewById(R.id.btConfirmColor);
+                btConfirmColor.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        myRectPaint.setColor(Color.rgb(red,green,blue));
+                        alertDialog.dismiss();
+                    }
+                });
+                final View ivColorPreview = alertDialog.findViewById(R.id.ivColorPreview);
+                SeekBar sbRed = (SeekBar) alertDialog.findViewById(R.id.sbRed);
+                sbRed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        red = progress;
+                        ivColorPreview.setBackgroundColor(Color.rgb(red, green, blue));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
+
+                SeekBar sbGreen = (SeekBar) alertDialog.findViewById(R.id.sbGreen);
+                sbGreen.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        green = progress;
+                        ivColorPreview.setBackgroundColor(Color.rgb(red, green, blue));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
+
+                SeekBar sbBlue = (SeekBar) alertDialog.findViewById(R.id.sbBlue);
+                sbBlue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        blue = progress;
+                        ivColorPreview.setBackgroundColor(Color.rgb(red, green, blue));
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    }
+                });
+
+            }
+        });
+
 
     }
 
@@ -331,7 +592,9 @@ public class EditorActivity extends AppCompatActivity {
         View hsvCrop = findViewById(R.id.hsvCrop);
         View hsvAdjust = findViewById(R.id.hsvAdjust);
         View adjustBrightness = findViewById(R.id.adjustBrightness);
+        View clAdjustBrush = findViewById(R.id.clAdjustBrush);
         isHsvAdjustHidden = true;
+        isDrawingEnabled = false;
         isHsvFilterHidden = true;
         isHsvCropHidden = true;
         isBrightnessSeekBarHidden = true;
@@ -339,9 +602,11 @@ public class EditorActivity extends AppCompatActivity {
         hsvCrop.setTranslationY(0);
         hsvAdjust.setTranslationY(0);
         hsvFilter.setTranslationY(0);
+        clAdjustBrush.setTranslationY(0);
     }
 
 }
+
 
 
 
