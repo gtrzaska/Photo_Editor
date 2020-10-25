@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -243,7 +241,7 @@ public class EditorActivity extends AppCompatActivity {
         btBright.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = ImageFilters.brightness(bitmap, 15);
+                bitmap = ImageFilters.changeBitmapContrastAndBrightness(bitmap, 10, 24);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -253,7 +251,7 @@ public class EditorActivity extends AppCompatActivity {
         btDark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = ImageFilters.brightness(bitmap, -25);
+                bitmap = ImageFilters.changeBitmapContrastAndBrightness(bitmap, 10, -32);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -323,7 +321,7 @@ public class EditorActivity extends AppCompatActivity {
         btBlueFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = ImageFilters.colorRGB(bitmap, true, false, true);
+                bitmap = ImageFilters.colorRGB(bitmap, false, false, true);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -449,7 +447,7 @@ public class EditorActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                bitmap = ImageFilters.changeBitmapContrast(history.get(history.size() - 1), progress);
+                bitmap = ImageFilters.changeBitmapContrastAndBrightness(history.get(history.size() - 1), progress, 0);
                 image.setImageBitmap(bitmap);
             }
 
@@ -493,7 +491,8 @@ public class EditorActivity extends AppCompatActivity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                bitmap = ImageFilters.brightness(history.get(history.size() - 1), progress);
+                bitmap = ImageFilters.changeBitmapContrastAndBrightness(history.get(history.size() - 1), 10, progress);
+                //bitmap = ImageFilters.brightness(history.get(history.size() - 1), progress);
                 image.setImageBitmap(bitmap);
             }
 
