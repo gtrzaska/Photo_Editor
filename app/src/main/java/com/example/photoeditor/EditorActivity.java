@@ -85,7 +85,7 @@ public class EditorActivity extends AppCompatActivity {
                 } else {
                     x = 2 + (bitmap.getHeight() / 1000);
                 }
-                if((bitmap.getWidth() / x) > screenWidth) {
+                if ((bitmap.getWidth() / x) > screenWidth) {
                     bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
                 } else {
                     x = bitmap.getWidth() / screenWidth;
@@ -107,6 +107,21 @@ public class EditorActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(EditorActivity.this, MainActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        View btCompare = findViewById(R.id.btCompare);
+        btCompare.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    image.setImageBitmap(bitmap);
+                    return true;
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    image.setImageBitmap(originalBitmap);
+                }
+
+                return false;
             }
         });
 
@@ -267,6 +282,16 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
+        View btVignetteFilter = findViewById(R.id.btVignetteFilter);
+        btVignetteFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.vignette(bitmap);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
         View btSepia = findViewById(R.id.btSepia);
         btSepia.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,6 +317,36 @@ public class EditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 bitmap = ImageFilters.negative(bitmap);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btBinary = findViewById(R.id.btBinary);
+        btBinary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.binary(bitmap);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btBinaryBW = findViewById(R.id.btBinaryBW);
+        btBinaryBW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.binaryBlackWhite(bitmap);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btSwapping = findViewById(R.id.btSwapping);
+        btSwapping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.swappingColor(bitmap);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -340,7 +395,7 @@ public class EditorActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                if(isDrawingEnabled) {
+                if (isDrawingEnabled) {
                     int action = event.getAction();
                     switch (action) {
                         case MotionEvent.ACTION_DOWN:
@@ -391,8 +446,10 @@ public class EditorActivity extends AppCompatActivity {
                     seekBar.refreshDrawableState();
                     myRectPaint = new Paint();
                     myRectPaint.setStyle(Paint.Style.STROKE);
-                    red = 0; green = 0; blue = 255;
-                    myRectPaint.setColor(Color.rgb(0,0,255));
+                    red = 0;
+                    green = 0;
+                    blue = 255;
+                    myRectPaint.setColor(Color.rgb(0, 0, 255));
                     myRectPaint.setStrokeWidth(8);
                     myRectPaint.setStrokeCap(Paint.Cap.ROUND);
                     tempBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
@@ -424,6 +481,7 @@ public class EditorActivity extends AppCompatActivity {
             public void onClick(View view) {
                 View adjustContrast = findViewById(R.id.adjustContrast);
                 if (isContrastSeekBarHidden) {
+                    closeMenu();
                     isContrastSeekBarHidden = false;
                     adjustContrast.setVisibility(View.VISIBLE);
                 } else {
@@ -468,6 +526,7 @@ public class EditorActivity extends AppCompatActivity {
             public void onClick(View view) {
                 View adjustBrightness = findViewById(R.id.adjustBrightness);
                 if (isBrightnessSeekBarHidden) {
+                    closeMenu();
                     isBrightnessSeekBarHidden = false;
                     adjustBrightness.setVisibility(View.VISIBLE);
                 } else {
@@ -492,7 +551,6 @@ public class EditorActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 bitmap = ImageFilters.changeBitmapContrastAndBrightness(history.get(history.size() - 1), 10, progress);
-                //bitmap = ImageFilters.brightness(history.get(history.size() - 1), progress);
                 image.setImageBitmap(bitmap);
             }
 
@@ -543,7 +601,7 @@ public class EditorActivity extends AppCompatActivity {
                 btConfirmColor.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        myRectPaint.setColor(Color.rgb(red,green,blue));
+                        myRectPaint.setColor(Color.rgb(red, green, blue));
                         alertDialog.dismiss();
                     }
                 });

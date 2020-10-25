@@ -6,6 +6,12 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RadialGradient;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
 
 import java.util.Random;
 
@@ -21,8 +27,8 @@ public class ImageFilters {
         int A, R, G, B;
         int pixel;
 
-        for(int x = 0; x < width; ++x) {
-            for(int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
                 pixel = src.getPixel(x, y);
                 A = Color.alpha(pixel);
                 R = Color.red(pixel);
@@ -44,11 +50,11 @@ public class ImageFilters {
         int width = src.getWidth();
         int height = src.getHeight();
         Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
-        int oldPixel ;
+        int oldPixel;
 
-        for(int x = 0; x < width; ++x) {
-            for(int y = 0; y < height; ++y) {
-                oldPixel  = src.getPixel(x, y);
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                oldPixel = src.getPixel(x, y);
                 int oldRed = Color.red(oldPixel);
                 int oldBlue = Color.blue(oldPixel);
                 int oldGreen = Color.green(oldPixel);
@@ -119,9 +125,9 @@ public class ImageFilters {
         int height = src.getHeight();
         Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
 
-        for(int x = 0; x < width; ++x) {
-            for(int y = 0; y < height; ++y) {
-                int oldPixel  = src.getPixel(x, y);
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                int oldPixel = src.getPixel(x, y);
                 int oldRed = Color.red(oldPixel);
                 int oldBlue = Color.blue(oldPixel);
                 int oldGreen = Color.green(oldPixel);
@@ -142,9 +148,9 @@ public class ImageFilters {
         int height = src.getHeight();
         Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
 
-        for(int x = 0; x < width; ++x) {
-            for(int y = 0; y < height; ++y) {
-                int oldPixel  = src.getPixel(x, y);
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                int oldPixel = src.getPixel(x, y);
                 // each pixel is made from RED_BLUE_GREEN_ALPHA
                 // so, getting current values of pixel
                 int oldRed = Color.red(oldPixel);
@@ -167,9 +173,8 @@ public class ImageFilters {
         return bmOut;
     }
 
-    public static Bitmap changeBitmapContrastAndBrightness(Bitmap bmp, float contrast, float brightness)
-    {
-        contrast*= 0.1;
+    public static Bitmap changeBitmapContrastAndBrightness(Bitmap bmp, float contrast, float brightness) {
+        contrast *= 0.1;
         ColorMatrix cm = new ColorMatrix(new float[]
                 {
                         contrast, 0, 0, 0, brightness,
@@ -185,6 +190,117 @@ public class ImageFilters {
         Paint paint = new Paint();
         paint.setColorFilter(new ColorMatrixColorFilter(cm));
         canvas.drawBitmap(bmp, 0, 0, paint);
+
+        return ret;
+    }
+
+    public static Bitmap vignette(Bitmap image) {
+        final int width = image.getWidth();
+        final int height = image.getHeight();
+
+        float radius = (float) (width / 1.2);
+        int[] colors = new int[]{0, 0x55000000, 0xff000000};
+        float[] positions = new float[]{0.0f, 0.5f, 1.0f};
+
+        RadialGradient gradient = new RadialGradient(width / 2, height / 2, radius, colors, positions, Shader.TileMode.CLAMP);
+
+        //RadialGradient gradient = new RadialGradient(width / 2, height / 2, radius, Color.TRANSPARENT, Color.BLACK, Shader.TileMode.CLAMP);
+
+        Canvas canvas = new Canvas(image);
+        canvas.drawARGB(1, 0, 0, 0);
+
+        final Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(Color.BLACK);
+        paint.setShader(gradient);
+
+        final Rect rect = new Rect(0, 0, image.getWidth(), image.getHeight());
+        final RectF rectf = new RectF(rect);
+
+        canvas.drawRect(rectf, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(image, rect, rect, paint);
+
+        return image;
+    }
+
+    public static Bitmap hue(Bitmap bitmap, float hue) {
+        Bitmap newBitmap = bitmap.copy(bitmap.getConfig(), true);
+        final int width = newBitmap.getWidth();
+        final int height = newBitmap.getHeight();
+        float[] hsv = new float[3];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = newBitmap.getPixel(x, y);
+                Color.colorToHSV(pixel, hsv);
+                hsv[0] = hue;
+                newBitmap.setPixel(x, y, Color.HSVToColor(Color.alpha(pixel), hsv));
+            }
+        }
+        return newBitmap;
+    }
+
+    public static Bitmap swappingColor(Bitmap src) {
+
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        0, 0, 1, 0, 0,
+                        1, 0, 0, 0, 0,
+                        0, 1, 0, 0, 0,
+                        0, 0, 0, 1, 0
+                });
+
+        Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(src, 0, 0, paint);
+
+        return ret;
+    }
+
+    public static Bitmap binary(Bitmap src) {
+
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        255, 0, 0, 0, -128 * 255,
+                        0, 255, 0, 0, -128 * 255,
+                        0, 0, 255, 0, -128 * 255,
+                        0, 0, 0, 1, 0
+                });
+
+        Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(src, 0, 0, paint);
+
+        return ret;
+    }
+
+    public static Bitmap binaryBlackWhite(Bitmap src) {
+
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        85, 85, 85, 0, -128 * 255,
+                        85, 85, 85, 0, -128 * 255,
+                        85, 85, 85, 0, -128 * 255,
+                        0, 0, 0, 1, 0
+                });
+
+        Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(src, 0, 0, paint);
 
         return ret;
     }

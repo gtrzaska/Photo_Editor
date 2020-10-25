@@ -411,6 +411,47 @@
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
 
+            <Button
+                android:id="@+id/btVignetteFilter"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/green_filter"
+                android:text="@string/vignette"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btBinary"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/binary"
+                android:text="@string/binary"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btBinaryBW"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/binarybw"
+                android:text="@string/binaryBW"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btSwapping"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/swapp"
+                android:text="@string/swap"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+
         </LinearLayout>
     </HorizontalScrollView>
 

@@ -25,4 +25,8 @@
     <string name="green">Zieleń</string>
     <string name="draw">Rysuj</string>
     <string name="contrast">Kontrast</string>
+    <string name="vignette">Winieta</string>
+    <string name="swap">Zamiana</string>
+    <string name="binary">Binary</string>
+    <string name="binaryBW"><![CDATA[Binary B&W]]></string>
 </resources>
