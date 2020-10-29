@@ -20,6 +20,12 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".EditorActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".CollagePickerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CollageCreator"
+            android:screenOrientation="portrait" />
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -29,4 +29,6 @@
     <string name="swap">Zamiana</string>
     <string name="binary">Binary</string>
     <string name="binaryBW"><![CDATA[Binary B&W]]></string>
+    <string name="yuv">YUV</string>
+    <string name="saturation">Nasycenie</string>
 </resources>

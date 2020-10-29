@@ -59,6 +59,7 @@ public class EditorActivity extends AppCompatActivity {
     boolean isHsvAdjustHidden = true;
     boolean isHsvFilterHidden = true;
     boolean isBrightnessSeekBarHidden = true;
+    boolean isSaturationSeekBarHidden = true;
     boolean isContrastSeekBarHidden = true;
     boolean isDrawingEnabled = false;
     ImageView image;
@@ -75,23 +76,10 @@ public class EditorActivity extends AppCompatActivity {
         image = findViewById(R.id.ivEditedPhoto);
 
         try {
-            int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
             bitmap = BitmapFactory.decodeStream(openFileInput("myImage"));
             bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-            if (bitmap.getWidth() > 1000 || bitmap.getHeight() > 1000) {
-                int x;
-                if (bitmap.getWidth() >= bitmap.getHeight()) {
-                    x = 2 + (bitmap.getWidth() / 1000);
-                } else {
-                    x = 2 + (bitmap.getHeight() / 1000);
-                }
-                if ((bitmap.getWidth() / x) > screenWidth) {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
-                } else {
-                    x = bitmap.getWidth() / screenWidth;
-                    bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / x, bitmap.getHeight() / x, true);
-                }
-            }
+
+            adjustSizeOfBitmapToScreen();
 
             originalBitmap = bitmap;
             history.add(bitmap);
@@ -197,6 +185,7 @@ public class EditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 bitmap = CropEditor.rotate(bitmap, 90);
+                adjustSizeOfBitmapToScreen();
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -276,7 +265,7 @@ public class EditorActivity extends AppCompatActivity {
         btGrey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitmap = ImageFilters.grey(bitmap);
+                bitmap = ImageFilters.saturation(bitmap, 0);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -377,6 +366,16 @@ public class EditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 bitmap = ImageFilters.colorRGB(bitmap, false, false, true);
+                history.add(bitmap);
+                image.setImageBitmap(bitmap);
+            }
+        });
+
+        View btRGB2YUV = findViewById(R.id.btRGB2YUV);
+        btRGB2YUV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bitmap = ImageFilters.yuv(bitmap);
                 history.add(bitmap);
                 image.setImageBitmap(bitmap);
             }
@@ -565,6 +564,51 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
+        View btSaturation = findViewById(R.id.btSaturation);
+        btSaturation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                View adjustSaturation = findViewById(R.id.adjustSaturation);
+                if (isSaturationSeekBarHidden) {
+                    closeMenu();
+                    isSaturationSeekBarHidden = false;
+                    adjustSaturation.setVisibility(View.VISIBLE);
+                } else {
+                    isSaturationSeekBarHidden = true;
+                    adjustSaturation.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        View btConfirmSaturation = findViewById(R.id.btConfirmSaturation);
+        btConfirmSaturation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                history.add(bitmap);
+                closeMenu();
+            }
+        });
+
+        SeekBar sbSaturation = (SeekBar) findViewById(R.id.sbSaturation);
+        sbSaturation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                bitmap = ImageFilters.saturation(history.get(history.size() - 1), progress / 10f);
+                image.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
         SeekBar sbBrushSize = (SeekBar) findViewById(R.id.sbBrushSize);
         sbBrushSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -590,6 +634,9 @@ public class EditorActivity extends AppCompatActivity {
         btColorPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                red = 0;
+                green = 0;
+                blue = 255;
                 AlertDialog.Builder builder = new AlertDialog.Builder(EditorActivity.this);
                 ViewGroup viewGroup = findViewById(android.R.id.content);
                 View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.color_picker, viewGroup, false);
@@ -693,6 +740,7 @@ public class EditorActivity extends AppCompatActivity {
         View hsvCrop = findViewById(R.id.hsvCrop);
         View hsvAdjust = findViewById(R.id.hsvAdjust);
         View adjustBrightness = findViewById(R.id.adjustBrightness);
+        View adjustSaturation = findViewById(R.id.adjustSaturation);
         View adjustContrast = findViewById(R.id.adjustContrast);
         View clAdjustBrush = findViewById(R.id.clAdjustBrush);
         isHsvAdjustHidden = true;
@@ -700,13 +748,25 @@ public class EditorActivity extends AppCompatActivity {
         isHsvFilterHidden = true;
         isHsvCropHidden = true;
         isBrightnessSeekBarHidden = true;
+        isSaturationSeekBarHidden = true;
         isContrastSeekBarHidden = true;
         adjustContrast.setVisibility(View.INVISIBLE);
         adjustBrightness.setVisibility(View.INVISIBLE);
+        adjustSaturation.setVisibility(View.INVISIBLE);
         hsvCrop.setTranslationY(0);
         hsvAdjust.setTranslationY(0);
         hsvFilter.setTranslationY(0);
         clAdjustBrush.setTranslationY(0);
+    }
+
+    public void adjustSizeOfBitmapToScreen() {
+        int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        double x = ((screenWidth * 1.0) / (bitmap.getWidth() * 1.0));
+        if (bitmap.getHeight() * x > screenHeight) {
+            x = ((screenHeight * 1.0) / (bitmap.getHeight() * 1.0));
+        }
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * x), (int) (bitmap.getHeight() * x), true);
     }
 
 }

@@ -39,19 +39,17 @@
             app:layout_constraintEnd_toStartOf="@+id/btSave"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <ImageButton
             android:id="@+id/btSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            android:text="@string/save"
-            android:textAlignment="center"
-            android:textColor="#0E4BF0"
-            android:textSize="25sp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_save" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -110,6 +108,39 @@
 
         <ImageView
             android:id="@+id/btConfirmContrast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.05"
+            app:srcCompat="@drawable/ok" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/adjustSaturation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-29dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <SeekBar
+            android:id="@+id/sbSaturation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.8"
+            android:backgroundTint="#000000"
+            android:indeterminate="false"
+            android:max="30"
+            android:min="0"
+            android:progress="10"
+            android:progressTint="#F3EDED"
+            android:secondaryProgressTint="#FFFFFF"
+            android:thumbTint="#FFFFFF"
+            android:tickMarkTint="#FDFCFC" />
+
+        <ImageView
+            android:id="@+id/btConfirmSaturation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -372,14 +403,14 @@
                 android:textSize="12sp" />
 
             <Button
-            android:id="@+id/btNegative"
-            android:layout_width="64dp"
-            android:layout_height="wrap_content"
-            android:background="#00090808"
-            android:drawableTop="@drawable/negative"
-            android:text="@string/negative"
-            android:textColor="#F8F7F1F1"
-            android:textSize="12sp" />
+                android:id="@+id/btNegative"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/negative"
+                android:text="@string/negative"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btBlueFilter"
@@ -416,7 +447,7 @@
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:background="#00090808"
-                android:drawableTop="@drawable/green_filter"
+                android:drawableTop="@drawable/vignrtte"
                 android:text="@string/vignette"
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
@@ -451,6 +482,15 @@
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
 
+            <Button
+                android:id="@+id/btRGB2YUV"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/yuv"
+                android:text="@string/yuv"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -471,15 +511,15 @@
             android:paddingTop="7dp">
 
             <Button
-            android:id="@+id/btBrightness"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#02FDFDFD"
-            android:drawableTop="@drawable/brightness"
-            android:text="@string/brightness"
-            android:textColor="#F8F7F1F1"
-            android:textSize="12sp" />
+                android:id="@+id/btBrightness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#02FDFDFD"
+                android:drawableTop="@drawable/brightness"
+                android:text="@string/brightness"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btContrast"
@@ -489,6 +529,17 @@
                 android:background="#02FDFDFD"
                 android:drawableTop="@drawable/contrast"
                 android:text="@string/contrast"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btSaturation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#02FDFDFD"
+                android:drawableTop="@drawable/saturation"
+                android:text="@string/saturation"
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
 
@@ -524,7 +575,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:backgroundTint="#000000"
-            android:max="64"
+            android:max="92"
             android:min="4"
             android:progress="8"
             android:progressTint="#F3EDED"

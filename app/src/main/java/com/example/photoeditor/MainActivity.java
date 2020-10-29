@@ -74,6 +74,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        View btCollage = findViewById(R.id.btCollage);
+        btCollage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    Intent intent = new Intent(MainActivity.this, CollagePickerActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
     }
 
     String mCurrentPhotoPath;

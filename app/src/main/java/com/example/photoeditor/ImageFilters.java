@@ -12,6 +12,7 @@ import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.util.Log;
 
 import java.util.Random;
 
@@ -144,33 +145,29 @@ public class ImageFilters {
     }
 
     public static Bitmap colorRGB(Bitmap src, boolean red, boolean green, boolean blue) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                int oldPixel = src.getPixel(x, y);
-                // each pixel is made from RED_BLUE_GREEN_ALPHA
-                // so, getting current values of pixel
-                int oldRed = Color.red(oldPixel);
-                int oldGreen = Color.green(oldPixel);
-                int oldBlue = Color.blue(oldPixel);
-                int oldAlpha = Color.alpha(oldPixel);
+        int newRed = red ? 1 : 0;
+        int newGreen = green ? 1 : 0;
+        int newBlue = blue ? 1 : 0;
 
-                // Algorithm for getting new values after calculation of filter
-                // Algorithm for GREEN FILTER, by intensity of each pixel
-                // set only green value others 0
-                int newRed = red ? oldRed : 0;
-                int newGreen = green ? oldGreen : 0;
-                int newBlue = blue ? oldBlue : 0;
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        newRed, newRed, newRed, 0, 0,
+                        newGreen, newGreen, newGreen, 0, 0,
+                        newBlue, newBlue, newBlue, 0, 0,
+                        0, 0, 0, 1, 0
+                });
 
-                // applying new pixel value to newBitmap
-                int newPixel = Color.argb(oldAlpha, newRed, newGreen, newBlue);
-                bmOut.setPixel(x, y, newPixel);
-            }
-        }
-        return bmOut;
+        Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(src, 0, 0, paint);
+
+        return ret;
+
     }
 
     public static Bitmap changeBitmapContrastAndBrightness(Bitmap bmp, float contrast, float brightness) {
@@ -203,8 +200,6 @@ public class ImageFilters {
         float[] positions = new float[]{0.0f, 0.5f, 1.0f};
 
         RadialGradient gradient = new RadialGradient(width / 2, height / 2, radius, colors, positions, Shader.TileMode.CLAMP);
-
-        //RadialGradient gradient = new RadialGradient(width / 2, height / 2, radius, Color.TRANSPARENT, Color.BLACK, Shader.TileMode.CLAMP);
 
         Canvas canvas = new Canvas(image);
         canvas.drawARGB(1, 0, 0, 0);
@@ -240,6 +235,20 @@ public class ImageFilters {
             }
         }
         return newBitmap;
+    }
+
+    public static Bitmap saturation(Bitmap bitmap, float sat) {
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(sat);
+        Bitmap ret = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+
+        return ret;
     }
 
     public static Bitmap swappingColor(Bitmap src) {
@@ -294,6 +303,21 @@ public class ImageFilters {
                         0, 0, 0, 1, 0
                 });
 
+        Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(src, 0, 0, paint);
+
+        return ret;
+    }
+
+    public static Bitmap yuv(Bitmap src) {
+
+        ColorMatrix cm = new ColorMatrix();
+        cm.setRGB2YUV();
         Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
 
         Canvas canvas = new Canvas(ret);
