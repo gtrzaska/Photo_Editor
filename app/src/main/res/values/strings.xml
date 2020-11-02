@@ -20,6 +20,7 @@
     <string name="dark">Ciemny</string>
     <string name="sketch">Szkic</string>
     <string name="negative">Negatyw</string>
+    <string name="sticker">Naklejka</string>
     <string name="blue">Niebieski</string>
     <string name="red">Czerwień</string>
     <string name="green">Zieleń</string>
@@ -31,4 +32,5 @@
     <string name="binaryBW"><![CDATA[Binary B&W]]></string>
     <string name="yuv">YUV</string>
     <string name="saturation">Nasycenie</string>
+    <string name="somethingGoWrong">Coś poszło nie tak!</string>
 </resources>

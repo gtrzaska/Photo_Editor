@@ -15,29 +15,23 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppCompatActivity implements View.OnClickListener {
 
     float downx = 0;
     float downy = 0;
@@ -62,6 +56,7 @@ public class EditorActivity extends AppCompatActivity {
     boolean isSaturationSeekBarHidden = true;
     boolean isContrastSeekBarHidden = true;
     boolean isDrawingEnabled = false;
+    View hsvFilter, hsvCrop, hsvAdjust, adjustBrightness, adjustSaturation, adjustContrast, clAdjustBrush;
     ImageView image;
     Bitmap tempBitmap;
     Canvas tempCanvas;
@@ -74,6 +69,14 @@ public class EditorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_editor);
         verifyStoragePermissions(EditorActivity.this);
         image = findViewById(R.id.ivEditedPhoto);
+
+        hsvFilter = findViewById(R.id.hsvFilter);
+        hsvCrop = findViewById(R.id.hsvCrop);
+        hsvAdjust = findViewById(R.id.hsvAdjust);
+        adjustBrightness = findViewById(R.id.adjustBrightness);
+        adjustSaturation = findViewById(R.id.adjustSaturation);
+        adjustContrast = findViewById(R.id.adjustContrast);
+        clAdjustBrush = findViewById(R.id.clAdjustBrush);
 
         try {
             bitmap = BitmapFactory.decodeStream(openFileInput("myImage"));
@@ -130,45 +133,31 @@ public class EditorActivity extends AppCompatActivity {
         btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Assume block needs to be inside a Try/Catch block.
-                String path = Environment.getExternalStorageDirectory().toString();
-                OutputStream fOut = null;
-                File file = new File(path, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
-                try {
-                    fOut = new FileOutputStream(file);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                boolean isSaved = SaveImage.saveBitmap(bitmap);
+                AlertDialog.Builder savedMessage = new AlertDialog.Builder(EditorActivity.this);
+                savedMessage.setPositiveButton(
+                        "Ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                if (isSaved) {
+                    savedMessage.setMessage(R.string.saved);
+                } else {
+                    savedMessage.setMessage(R.string.somethingGoWrong);
                 }
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
-                try {
-                    fOut.flush();
-                    fOut.close();
-                    AlertDialog.Builder builder1 = new AlertDialog.Builder(EditorActivity.this);
-                    builder1.setMessage(R.string.saved);
-
-                    builder1.setPositiveButton(
-                            "Ok",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                    AlertDialog alert11 = builder1.create();
-                    alert11.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                AlertDialog alert11 = savedMessage.create();
+                alert11.show();
 
             }
         });
+
 
         final View btCropMenu = findViewById(R.id.btCropMenu);
         btCropMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View hsvCrop = findViewById(R.id.hsvCrop);
                 if (isHsvCropHidden) {
                     closeMenu();
                     isHsvCropHidden = false;
@@ -180,55 +169,15 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
-        View btRotate = findViewById(R.id.btRotate);
-        btRotate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = CropEditor.rotate(bitmap, 90);
-                adjustSizeOfBitmapToScreen();
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btFlipVertical = findViewById(R.id.btFlipVertical);
-        btFlipVertical.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = CropEditor.flip(bitmap, false, true);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btFlipHorizontal = findViewById(R.id.btFlipHorizontal);
-        btFlipHorizontal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = CropEditor.flip(bitmap, true, false);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        final View btCrop = findViewById(R.id.btCrop);
-        btCrop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(EditorActivity.this);
-                ViewGroup viewGroup = findViewById(android.R.id.content);
-                View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.color_picker, viewGroup, false);
-                builder.setView(dialogView);
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
-        });
+        LinearLayout llCrop = (LinearLayout) findViewById(R.id.llCrop);
+        for (int i = 0; i < llCrop.getChildCount(); i++) {
+            llCrop.getChildAt(i).setOnClickListener(this);
+        }
 
         final View btFilterMenu = findViewById(R.id.btFilter);
         btFilterMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View hsvFilter = findViewById(R.id.hsvFilter);
                 View hsvMenu = findViewById(R.id.hsvMenu);
                 if (isHsvFilterHidden) {
                     closeMenu();
@@ -241,145 +190,10 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
 
-        View btBright = findViewById(R.id.btBright);
-        btBright.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.changeBitmapContrastAndBrightness(bitmap, 10, 24);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btDark = findViewById(R.id.btDark);
-        btDark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.changeBitmapContrastAndBrightness(bitmap, 10, -32);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btGrey = findViewById(R.id.btGrey);
-        btGrey.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.saturation(bitmap, 0);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btVignetteFilter = findViewById(R.id.btVignetteFilter);
-        btVignetteFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.vignette(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btSepia = findViewById(R.id.btSepia);
-        btSepia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.sepia(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btSketch = findViewById(R.id.btSketch);
-        btSketch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.sketch(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btNegative = findViewById(R.id.btNegative);
-        btNegative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.negative(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btBinary = findViewById(R.id.btBinary);
-        btBinary.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.binary(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btBinaryBW = findViewById(R.id.btBinaryBW);
-        btBinaryBW.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.binaryBlackWhite(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btSwapping = findViewById(R.id.btSwapping);
-        btSwapping.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.swappingColor(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btGreenFilter = findViewById(R.id.btGreenFilter);
-        btGreenFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.colorRGB(bitmap, false, true, false);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btRedFilter = findViewById(R.id.btRedFilter);
-        btRedFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.colorRGB(bitmap, true, false, false);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btBlueFilter = findViewById(R.id.btBlueFilter);
-        btBlueFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.colorRGB(bitmap, false, false, true);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
-
-        View btRGB2YUV = findViewById(R.id.btRGB2YUV);
-        btRGB2YUV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                bitmap = ImageFilters.yuv(bitmap);
-                history.add(bitmap);
-                image.setImageBitmap(bitmap);
-            }
-        });
+        LinearLayout llFilters = (LinearLayout) findViewById(R.id.llFilters);
+        for (int i = 0; i < llFilters.getChildCount(); i++) {
+            llFilters.getChildAt(i).setOnClickListener(this);
+        }
 
         View btConfirmBrush = findViewById(R.id.btConfirmBrush);
         btConfirmBrush.setOnClickListener(new View.OnClickListener() {
@@ -412,7 +226,6 @@ public class EditorActivity extends AppCompatActivity {
                         case MotionEvent.ACTION_UP:
                             upx = event.getX();
                             upy = event.getY();
-                            Log.v("------", downx + "x" + downy + " - " + upx + "x" + upy);
                             tempCanvas.drawLine(downx, downy, upx, upy, myRectPaint);
                             image.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
                             downx = upx;
@@ -433,7 +246,6 @@ public class EditorActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                View clAdjustBrush = findViewById(R.id.clAdjustBrush);
                 if (isDrawingEnabled) {
                     isDrawingEnabled = false;
                     clAdjustBrush.setTranslationY(0);
@@ -462,7 +274,6 @@ public class EditorActivity extends AppCompatActivity {
         btAdjustMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View hsvAdjust = findViewById(R.id.hsvAdjust);
                 if (isHsvAdjustHidden) {
                     closeMenu();
                     isHsvAdjustHidden = false;
@@ -478,7 +289,6 @@ public class EditorActivity extends AppCompatActivity {
         btContrast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View adjustContrast = findViewById(R.id.adjustContrast);
                 if (isContrastSeekBarHidden) {
                     closeMenu();
                     isContrastSeekBarHidden = false;
@@ -523,7 +333,6 @@ public class EditorActivity extends AppCompatActivity {
         btBrightness.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View adjustBrightness = findViewById(R.id.adjustBrightness);
                 if (isBrightnessSeekBarHidden) {
                     closeMenu();
                     isBrightnessSeekBarHidden = false;
@@ -568,7 +377,6 @@ public class EditorActivity extends AppCompatActivity {
         btSaturation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View adjustSaturation = findViewById(R.id.adjustSaturation);
                 if (isSaturationSeekBarHidden) {
                     closeMenu();
                     isSaturationSeekBarHidden = false;
@@ -715,7 +523,14 @@ public class EditorActivity extends AppCompatActivity {
 
             }
         });
-
+        final View btText = findViewById(R.id.btText);
+        btText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EditorActivity.this, AddTextActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -736,13 +551,6 @@ public class EditorActivity extends AppCompatActivity {
     public void closeMenu() {
         bitmap = history.get(history.size() - 1);
         image.setImageBitmap(bitmap);
-        View hsvFilter = findViewById(R.id.hsvFilter);
-        View hsvCrop = findViewById(R.id.hsvCrop);
-        View hsvAdjust = findViewById(R.id.hsvAdjust);
-        View adjustBrightness = findViewById(R.id.adjustBrightness);
-        View adjustSaturation = findViewById(R.id.adjustSaturation);
-        View adjustContrast = findViewById(R.id.adjustContrast);
-        View clAdjustBrush = findViewById(R.id.clAdjustBrush);
         isHsvAdjustHidden = true;
         isDrawingEnabled = false;
         isHsvFilterHidden = true;
@@ -769,8 +577,64 @@ public class EditorActivity extends AppCompatActivity {
         bitmap = Bitmap.createScaledBitmap(bitmap, (int) (bitmap.getWidth() * x), (int) (bitmap.getHeight() * x), true);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btBright:
+                bitmap = ImageFilters.changeBitmapContrastAndBrightness(bitmap, 10, 24);
+                break;
+            case R.id.btDark:
+                bitmap = ImageFilters.changeBitmapContrastAndBrightness(bitmap, 10, -32);
+                break;
+            case R.id.btGrey:
+                bitmap = ImageFilters.saturation(bitmap, 0);
+                break;
+            case R.id.btSepia:
+                bitmap = ImageFilters.sepia(bitmap);
+                break;
+            case R.id.btSketch:
+                bitmap = ImageFilters.sketch(bitmap);
+                break;
+            case R.id.btNegative:
+                bitmap = ImageFilters.negative(bitmap);
+                break;
+            case R.id.btBlueFilter:
+                bitmap = ImageFilters.colorRGB(bitmap, false, false, true);
+                break;
+            case R.id.btRedFilter:
+                bitmap = ImageFilters.colorRGB(bitmap, true, false, false);
+                break;
+            case R.id.btGreenFilter:
+                bitmap = ImageFilters.colorRGB(bitmap, false, true, false);
+                break;
+            case R.id.btVignetteFilter:
+                bitmap = ImageFilters.vignette(bitmap);
+                break;
+            case R.id.btBinary:
+                bitmap = ImageFilters.binary(bitmap);
+                break;
+            case R.id.btBinaryBW:
+                bitmap = ImageFilters.binaryBlackWhite(bitmap);
+                break;
+            case R.id.btSwapping:
+                bitmap = ImageFilters.swappingColor(bitmap);
+                break;
+            case R.id.btRGB2YUV:
+                bitmap = ImageFilters.yuv(bitmap);
+                break;
+            case R.id.btRotate:
+                bitmap = CropEditor.rotate(bitmap, 90);
+                ;
+                adjustSizeOfBitmapToScreen();
+                break;
+            case R.id.btFlipVertical:
+                bitmap = CropEditor.flip(bitmap, false, true);
+                break;
+            case R.id.btFlipHorizontal:
+                bitmap = CropEditor.flip(bitmap, true, false);
+                break;
+        }
+        history.add(bitmap);
+        image.setImageBitmap(bitmap);
+    }
 }
-
-
-
-

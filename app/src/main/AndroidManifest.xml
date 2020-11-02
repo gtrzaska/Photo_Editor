@@ -24,6 +24,9 @@
             android:name=".CollagePickerActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".AddTextActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".CollageCreator"
             android:screenOrientation="portrait" />
         <activity android:name=".MainActivity"

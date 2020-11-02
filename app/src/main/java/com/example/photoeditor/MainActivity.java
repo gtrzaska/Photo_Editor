@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int CAMERA_REQUEST = 1888;
+    private static final int CAMERA_REQUEST = 200;
     Uri photoURI;
     private static final int PICK_IMAGE = 100;
 

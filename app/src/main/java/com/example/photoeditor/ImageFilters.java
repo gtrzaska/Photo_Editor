@@ -12,40 +12,11 @@ import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.util.Log;
-
-import java.util.Random;
 
 public class ImageFilters {
 
     private final static int HIGHEST_COLOR_VALUE = 255;
     private final static int LOWEST_COLOR_VALUE = 0;
-
-    public static Bitmap grey(Bitmap src) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
-        int A, R, G, B;
-        int pixel;
-
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                pixel = src.getPixel(x, y);
-                A = Color.alpha(pixel);
-                R = Color.red(pixel);
-                G = Color.green(pixel);
-                B = Color.blue(pixel);
-
-                int intensity = (R + B + G) / 3;
-                R = intensity;
-                B = intensity;
-                G = intensity;
-
-                bmOut.setPixel(x, y, Color.argb(A, R, G, B));
-            }
-        }
-        return bmOut;
-    }
 
     public static Bitmap sketch(Bitmap src) {
         int width = src.getWidth();
@@ -122,26 +93,24 @@ public class ImageFilters {
     }
 
     public static Bitmap negative(Bitmap src) {
-        int width = src.getWidth();
-        int height = src.getHeight();
-        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                int oldPixel = src.getPixel(x, y);
-                int oldRed = Color.red(oldPixel);
-                int oldBlue = Color.blue(oldPixel);
-                int oldGreen = Color.green(oldPixel);
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        -1, 0, 0, 0, 255,
+                        0, -1, 0, 0, 255,
+                        0, 0, -1, 0, 255,
+                        0, 0, 0, 1, 0
+                });
 
-                int newRed = HIGHEST_COLOR_VALUE - oldRed;
-                int newBlue = HIGHEST_COLOR_VALUE - oldBlue;
-                int newGreen = HIGHEST_COLOR_VALUE - oldGreen;
-                int newPixel = Color.rgb(newRed, newGreen, newBlue);
+        Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
 
-                bmOut.setPixel(x, y, newPixel);
-            }
-        }
-        return bmOut;
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(src, 0, 0, paint);
+
+        return ret;
     }
 
     public static Bitmap colorRGB(Bitmap src, boolean red, boolean green, boolean blue) {
@@ -191,7 +160,8 @@ public class ImageFilters {
         return ret;
     }
 
-    public static Bitmap vignette(Bitmap image) {
+    public static Bitmap vignette(Bitmap src) {
+        Bitmap image = src;
         final int width = image.getWidth();
         final int height = image.getHeight();
 
