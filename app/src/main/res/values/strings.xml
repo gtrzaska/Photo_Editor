@@ -38,4 +38,9 @@
     <string name="confirm">Potwierdź</string>
     <string name="uploadSuccessful">Wysyłanie zakończone</string>
     <string name="noInternetConnection">Brak internetu</string>
+    <string name="RegistrationSuccessful">Utworzono użytkownika</string>
+    <string name="RegistrationFailed">Nie udało się utworzyć użytkownika</string>
+    <string name="LoginSuccessful">Zalogowano</string>
+    <string name="SignOutSuccessful">Wylogowano</string>
+    <string name="noLogged">Nie zalogowano</string>
 </resources>
