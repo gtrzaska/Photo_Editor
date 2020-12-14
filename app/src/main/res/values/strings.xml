@@ -33,4 +33,7 @@
     <string name="yuv">YUV</string>
     <string name="saturation">Nasycenie</string>
     <string name="somethingGoWrong">Coś poszło nie tak!</string>
+    <string name="size">Wielkość</string>
+    <string name="opacity">Opacity</string>
+    <string name="confirm">Potwierdź</string>
 </resources>
