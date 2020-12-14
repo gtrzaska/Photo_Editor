@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -90,7 +91,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         clAdjustBrush = findViewById(R.id.clAdjustBrush);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
-        //mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+        // mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
 
         try {
@@ -170,17 +171,20 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         btUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (isOnline()) {
-                    if (mUploadTask != null && mUploadTask.isInProgress()) {
-                        Toast.makeText(EditorActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                        if (mUploadTask != null && mUploadTask.isInProgress()) {
+                            Toast.makeText(EditorActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                        } else {
+                            uploadFile();
+                        }
                     } else {
-                        uploadFile();
+                        Toast.makeText(EditorActivity.this, R.string.noLogged, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(EditorActivity.this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
 

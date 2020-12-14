@@ -4,16 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#666464"
     tools:context=".MainActivity">
 
+    <ImageButton
+        android:id="@+id/btAuth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="#00412929"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/account" />
+
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="94dp"
+        android:background="#00666464"
         android:gravity="bottom|center_horizontal"
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/btAuth"
+        app:layout_constraintVertical_bias="0.39"
+        tools:layout_editor_absoluteX="0dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,13 +78,14 @@
                 android:textColor="#fff" />
 
             <Button
+                android:id="@+id/btCloud"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/circle"
-                android:drawableTop="@drawable/collage"
+                android:drawableTop="@drawable/cloud"
                 android:paddingTop="35dp"
-                android:text="Test"
+                android:text="Chmura"
                 android:textColor="#fff" />
 
         </LinearLayout>

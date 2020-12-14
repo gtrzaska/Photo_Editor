@@ -29,6 +29,9 @@
             android:name=".AddTextActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".AuthenticationActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".CollageCreator"
             android:screenOrientation="portrait" />
         <activity android:name=".MainActivity"

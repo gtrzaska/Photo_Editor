@@ -3,15 +3,20 @@ package com.example.photoeditor;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -81,6 +86,71 @@ public class MainActivity extends AppCompatActivity {
                 {
                     Intent intent = new Intent(MainActivity.this, CollagePickerActivity.class);
                     startActivity(intent);
+                }
+            }
+        });
+
+        View btAuth = findViewById(R.id.btAuth);
+
+        btAuth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    if (isOnline()) {
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
+                            builder.setTitle("Wylogować?");
+
+                            builder.setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    FirebaseAuth.getInstance().signOut();
+                                    Toast.makeText(MainActivity.this, R.string.SignOutSuccessful, Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            builder.setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    // Do nothing
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        } else {
+                            Intent intent = new Intent(MainActivity.this, AuthenticationActivity.class);
+                            startActivity(intent);
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        View btCloud = findViewById(R.id.btCloud);
+
+        btCloud.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    if (isOnline()) {
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+                        } else {
+                            Toast.makeText(MainActivity.this, R.string.noLogged, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -162,6 +232,21 @@ public class MainActivity extends AppCompatActivity {
         if (!dir.exists()) {
             dir.mkdir();
         }
+    }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
 }
