@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.photoeditor">
 
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -19,6 +21,15 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".EditorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CollagePickerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddTextActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CollageCreator"
             android:screenOrientation="portrait" />
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait">

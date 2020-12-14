@@ -36,22 +36,34 @@
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="25sp"
-            app:layout_constraintEnd_toStartOf="@+id/btSave"
+            app:layout_constraintEnd_toStartOf="@+id/btUpload"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <ImageButton
             android:id="@+id/btSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            android:text="@string/save"
-            android:textAlignment="center"
-            android:textColor="#0E4BF0"
-            android:textSize="25sp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_save" />
+
+        <ImageButton
+            android:id="@+id/btUpload"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginBottom="8dp"
+            android:background="#00FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.25"
+            app:srcCompat="@android:drawable/stat_sys_upload" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -117,6 +129,39 @@
             app:srcCompat="@drawable/ok" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/adjustSaturation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-29dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <SeekBar
+            android:id="@+id/sbSaturation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.8"
+            android:backgroundTint="#000000"
+            android:indeterminate="false"
+            android:max="30"
+            android:min="0"
+            android:progress="10"
+            android:progressTint="#F3EDED"
+            android:secondaryProgressTint="#FFFFFF"
+            android:thumbTint="#FFFFFF"
+            android:tickMarkTint="#FDFCFC" />
+
+        <ImageView
+            android:id="@+id/btConfirmSaturation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.05"
+            app:srcCompat="@drawable/ok" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/btCompare"
         android:layout_width="32dp"
@@ -138,7 +183,6 @@
             android:id="@+id/ivEditedPhoto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
@@ -233,13 +277,13 @@
 
 
                 <Button
-                    android:id="@+id/button9"
+                    android:id="@+id/btSticker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="#00FFFFFF"
-                    android:drawableTop="@drawable/filter"
-                    android:text="Test"
+                    android:drawableTop="@drawable/sticker"
+                    android:text="@string/sticker"
                     android:textColor="#F8F7F1F1"
                     android:textSize="12sp" />
 
@@ -256,6 +300,7 @@
         android:scrollbars="none">
 
         <LinearLayout
+            android:id="@+id/llCrop"
             android:layout_width="505dp"
             android:layout_height="64dp"
             android:background="#1F1C1C"
@@ -315,8 +360,9 @@
         android:scrollbars="none">
 
         <LinearLayout
+            android:id="@+id/llFilters"
             android:layout_width="505dp"
-            android:layout_height="92dp"
+            android:layout_height="wrap_content"
             android:background="#00FFFFFF"
             android:orientation="horizontal"
             android:paddingTop="7dp">
@@ -372,14 +418,14 @@
                 android:textSize="12sp" />
 
             <Button
-            android:id="@+id/btNegative"
-            android:layout_width="64dp"
-            android:layout_height="wrap_content"
-            android:background="#00090808"
-            android:drawableTop="@drawable/negative"
-            android:text="@string/negative"
-            android:textColor="#F8F7F1F1"
-            android:textSize="12sp" />
+                android:id="@+id/btNegative"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/negative"
+                android:text="@string/negative"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btBlueFilter"
@@ -411,6 +457,56 @@
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
 
+            <Button
+                android:id="@+id/btVignetteFilter"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/vignrtte"
+                android:text="@string/vignette"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btBinary"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/binary"
+                android:text="@string/binary"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btBinaryBW"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/binarybw"
+                android:text="@string/binaryBW"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btSwapping"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/swapp"
+                android:text="@string/swap"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btRGB2YUV"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/yuv"
+                android:text="@string/yuv"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -430,15 +526,15 @@
             android:paddingTop="7dp">
 
             <Button
-            android:id="@+id/btBrightness"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#02FDFDFD"
-            android:drawableTop="@drawable/brightness"
-            android:text="@string/brightness"
-            android:textColor="#F8F7F1F1"
-            android:textSize="12sp" />
+                android:id="@+id/btBrightness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#02FDFDFD"
+                android:drawableTop="@drawable/brightness"
+                android:text="@string/brightness"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
 
             <Button
                 android:id="@+id/btContrast"
@@ -448,6 +544,17 @@
                 android:background="#02FDFDFD"
                 android:drawableTop="@drawable/contrast"
                 android:text="@string/contrast"
+                android:textColor="#F8F7F1F1"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btSaturation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#02FDFDFD"
+                android:drawableTop="@drawable/saturation"
+                android:text="@string/saturation"
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
 
@@ -483,7 +590,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:backgroundTint="#000000"
-            android:max="64"
+            android:max="92"
             android:min="4"
             android:progress="8"
             android:progressTint="#F3EDED"
@@ -507,6 +614,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ok" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </LinearLayout>
