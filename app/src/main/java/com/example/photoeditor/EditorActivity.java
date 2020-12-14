@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,10 +22,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -56,6 +70,10 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
     Canvas tempCanvas;
     Paint myRectPaint;
 
+    private StorageReference mStorageRef;
+    private DatabaseReference mDatabaseRef;
+    private StorageTask mUploadTask;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +88,9 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         adjustSaturation = findViewById(R.id.adjustSaturation);
         adjustContrast = findViewById(R.id.adjustContrast);
         clAdjustBrush = findViewById(R.id.clAdjustBrush);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        //mDatabaseRef = FirebaseDatabase.getInstance().getReference();
 
 
         try {
@@ -141,6 +162,24 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 }
                 AlertDialog alert11 = savedMessage.create();
                 alert11.show();
+
+            }
+        });
+
+        View btUpload = findViewById(R.id.btUpload);
+        btUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isOnline()) {
+                    if (mUploadTask != null && mUploadTask.isInProgress()) {
+                        Toast.makeText(EditorActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                    } else {
+                        uploadFile();
+                    }
+                } else {
+                    Toast.makeText(EditorActivity.this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
+                }
+
 
             }
         });
@@ -728,4 +767,39 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         history.add(bitmap);
         image.setImageBitmap(bitmap);
     }
+
+    private void uploadFile() {
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bOut);
+        byte[] data = bOut.toByteArray();
+        StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + ".png");
+        UploadTask uploadTask = fileReference.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(EditorActivity.this, R.string.uploadSuccessful, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 }
