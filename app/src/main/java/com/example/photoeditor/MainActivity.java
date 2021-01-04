@@ -100,9 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
                             builder.setTitle("Wylogować?");
-
                             builder.setPositiveButton("Tak", new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface dialog, int which) {
@@ -112,17 +110,13 @@ public class MainActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             });
-
                             builder.setNegativeButton("Nie", new DialogInterface.OnClickListener() {
 
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-                                    // Do nothing
                                     dialog.dismiss();
                                 }
                             });
-
                             AlertDialog alert = builder.create();
                             alert.show();
                         } else {
@@ -144,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 {
                     if (isOnline()) {
                         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                            Intent intent = new Intent(MainActivity.this, ImagesActivity.class);
+                            startActivity(intent);
 
                         } else {
                             Toast.makeText(MainActivity.this, R.string.noLogged, Toast.LENGTH_SHORT).show();

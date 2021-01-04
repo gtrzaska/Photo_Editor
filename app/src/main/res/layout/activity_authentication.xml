@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="#FFFFFF">
 
     <ImageButton
         android:id="@+id/btBack"
@@ -16,87 +17,76 @@
         android:background="#00FFFFFF"
         app:srcCompat="@drawable/back" />
 
-    <TextView
-        android:id="@+id/tvLogin"
+    <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btBack"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="41dp"
-        android:text="Email"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp" />
-
-    <TextView
-        android:id="@+id/tvPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvLogin"
-        android:layout_alignStart="@+id/tvLogin"
-        android:layout_marginStart="-1dp"
-        android:layout_marginTop="32dp"
-        android:text="Hasło"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="122dp"
+        app:srcCompat="@drawable/accountbig" />
 
     <EditText
         android:id="@+id/etLogin"
-        android:layout_width="239dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tvLogin"
+        android:layout_below="@+id/imageView2"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="29dp"
-        android:layout_marginTop="-3dp"
-        android:layout_marginEnd="45dp"
-        android:layout_toEndOf="@+id/tvLogin"
-        android:background="#FFFBFB"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="59dp"
+        android:layout_marginEnd="32dp"
         android:ems="10"
+        android:hint="E-mail"
         android:inputType="textPersonName|textEmailAddress"
         android:padding="6dp"
-        android:textColor="#000000"
-        android:textColorLink="#000000"
-        android:textCursorDrawable="@color/black"
         android:textSize="24sp" />
 
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="239dp"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/etLogin"
         android:layout_alignStart="@+id/etLogin"
-        android:layout_alignTop="@+id/tvPassword"
         android:layout_alignEnd="@+id/etLogin"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="-3dp"
-        android:layout_marginEnd="0dp"
-        android:background="#FFFBFB"
+        android:layout_marginStart="-2dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="2dp"
         android:ems="10"
+        android:hint="Hasło"
         android:inputType="textPersonName|textPassword"
         android:padding="6dp"
-        android:textColor="#000000"
-        android:textColorLink="#000000"
-        android:textCursorDrawable="@color/black"
         android:textSize="24sp" />
 
     <Button
         android:id="@+id/btSignIn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/etPassword"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="90dp"
-        android:layout_marginTop="41dp"
-        android:text="Logownie" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="64dp"
+        android:background="@drawable/circle"
+        android:textColor="#fff"
+        android:text="@string/signIn" />
 
     <Button
         android:id="@+id/btSignUp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/etPassword"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="41dp"
-        android:layout_toEndOf="@+id/btSignIn"
-        android:text="Rejestracja" />
+        android:layout_below="@+id/btSignIn"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="64dp"
+        android:background="@drawable/circle"
+        android:text="@string/SignUp"
+        android:textColor="#fff" />
+
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -112,4 +102,5 @@
         android:layout_marginEnd="162dp"
         android:layout_marginBottom="270dp"
         android:visibility="invisible" />
+
 </RelativeLayout>

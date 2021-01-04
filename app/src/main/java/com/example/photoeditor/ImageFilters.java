@@ -225,9 +225,9 @@ public class ImageFilters {
 
         ColorMatrix cm = new ColorMatrix(new float[]
                 {
+                        0, 1, 0, 0, 0,
                         0, 0, 1, 0, 0,
                         1, 0, 0, 0, 0,
-                        0, 1, 0, 0, 0,
                         0, 0, 0, 1, 0
                 });
 
@@ -252,6 +252,26 @@ public class ImageFilters {
                         0, 0, 0, 1, 0
                 });
 
+        Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
+
+        Canvas canvas = new Canvas(ret);
+
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        canvas.drawBitmap(src, 0, 0, paint);
+
+        return ret;
+    }
+
+    public static Bitmap gr(Bitmap src) {
+
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        0.25f, 0.25f, 0.25f, 0, 0,
+                        0.25f, 0.25f, 0.25f, 0, 0,
+                        0.25f, 0.25f, 0.25f, 0, 0,
+                        0, 0, 0, 1, 0
+                });
         Bitmap ret = Bitmap.createBitmap(src.getWidth(), src.getHeight(), src.getConfig());
 
         Canvas canvas = new Canvas(ret);

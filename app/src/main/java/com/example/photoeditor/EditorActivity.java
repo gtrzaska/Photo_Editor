@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,14 +22,17 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -38,13 +42,15 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class EditorActivity extends AppCompatActivity implements View.OnClickListener {
-
+    ProgressBar progressBar;
     float downx = 0;
     float downy = 0;
     float upx = 0;
@@ -89,9 +95,10 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         adjustSaturation = findViewById(R.id.adjustSaturation);
         adjustContrast = findViewById(R.id.adjustContrast);
         clAdjustBrush = findViewById(R.id.clAdjustBrush);
+        progressBar = findViewById(R.id.editProgressBar);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
-        // mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
 
         try {
@@ -103,6 +110,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             originalBitmap = bitmap;
             history.add(bitmap);
             image.setImageBitmap(bitmap);
+            Log.d("rotation", String.valueOf(image.getRotation()));
+            //image.setRotation(90);
             closeMenu();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -143,26 +152,56 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
+
+        /*
+
+Did you try using the following code? It is use to send binary data to other apps.
+
+Intent shareIntent = new Intent();
+shareIntent.setAction(Intent.ACTION_SEND);
+shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
+shareIntent.setType("image/jpeg");
+startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
+
+         */
         View btSave = findViewById(R.id.btSave);
         btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean isSaved = SaveImage.saveBitmap(bitmap);
-                AlertDialog.Builder savedMessage = new AlertDialog.Builder(EditorActivity.this);
-                savedMessage.setPositiveButton(
-                        "Ok",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                if (isSaved) {
-                    savedMessage.setMessage(R.string.saved);
+                final File isSaved = SaveImage.saveBitmap(bitmap);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditorActivity.this);
+                builder.setTitle("Udostępnić zdjęcie?");
+                builder.setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        Uri photoURI = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
+                                BuildConfig.APPLICATION_ID + ".provider",
+                                isSaved);
+                        Intent shareIntent = new Intent();
+                        shareIntent.setAction(Intent.ACTION_SEND);
+
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, photoURI);  //optional//use this when you want to send an image
+                        shareIntent.setType("image/jpeg");
+                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(Intent.createChooser(shareIntent, "send"));
+                    }
+                });
+                builder.setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alert = builder.create();
+
+                alert.show();
+                if (isSaved != null) {
+                    Toast.makeText(EditorActivity.this, R.string.Saved, Toast.LENGTH_LONG).show();
                 } else {
-                    savedMessage.setMessage(R.string.somethingGoWrong);
+                    Toast.makeText(EditorActivity.this, "Nie udało się zapisać", Toast.LENGTH_LONG).show();
                 }
-                AlertDialog alert11 = savedMessage.create();
-                alert11.show();
 
             }
         });
@@ -177,6 +216,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                         if (mUploadTask != null && mUploadTask.isInProgress()) {
                             Toast.makeText(EditorActivity.this, "Upload in progress", Toast.LENGTH_SHORT).show();
                         } else {
+                            progressBar.setVisibility(View.VISIBLE);
                             uploadFile();
                         }
                     } else {
@@ -217,7 +257,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 if (isHsvFilterHidden) {
                     closeMenu();
                     isHsvFilterHidden = false;
-                    hsvFilter.setTranslationY((-1) * (hsvMenu.getHeight() + hsvFilter.getHeight() + 2));
+                    hsvFilter.setTranslationY((-1) * (hsvMenu.getHeight() + hsvFilter.getHeight() + 24));
                 } else {
                     isHsvFilterHidden = true;
                     hsvFilter.setTranslationY(0);
@@ -722,7 +762,8 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 bitmap = ImageFilters.changeBitmapContrastAndBrightness(bitmap, 10, -32);
                 break;
             case R.id.btGrey:
-                bitmap = ImageFilters.saturation(bitmap, 0);
+                // bitmap = ImageFilters.saturation(bitmap, 0);
+                bitmap = ImageFilters.gr(bitmap);
                 break;
             case R.id.btSepia:
                 bitmap = ImageFilters.sepia(bitmap);
@@ -772,12 +813,36 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         image.setImageBitmap(bitmap);
     }
 
+    boolean isPublic = false;
     private void uploadFile() {
+
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bOut);
         byte[] data = bOut.toByteArray();
         StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + ".png");
         UploadTask uploadTask = fileReference.putBytes(data);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditorActivity.this);
+        builder.setTitle("Ustawić jako publiczne?");
+        builder.setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                isPublic = true;
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                isPublic = false;
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+
+        alert.show();
+
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
@@ -786,7 +851,23 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(EditorActivity.this, R.string.uploadSuccessful, Toast.LENGTH_LONG).show();
+                if (taskSnapshot.getMetadata() != null) {
+                    if (taskSnapshot.getMetadata().getReference() != null) {
+                        Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();
+                        result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                String imageUrl = uri.toString();
+                                Upload upload = new Upload(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                                        imageUrl, isPublic, 0);
+                                String uploadId = mDatabaseRef.push().getKey();
+                                mDatabaseRef.child(uploadId).setValue(upload);
+                                progressBar.setVisibility(View.INVISIBLE);
+                                Toast.makeText(EditorActivity.this, R.string.uploadSuccessful, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
             }
         });
     }

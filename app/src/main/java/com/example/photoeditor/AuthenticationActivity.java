@@ -3,6 +3,7 @@ package com.example.photoeditor;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -76,6 +77,17 @@ public class AuthenticationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(AuthenticationActivity.this, R.string.RegistrationSuccessful, Toast.LENGTH_LONG).show();
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.i("Success", "Yes");
+                                    } else {
+                                        Log.i("Success", "No");
+                                    }
+                                }
+                            });
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {
                             //Toast.makeText(AuthenticationActivity.this, R.string.RegistrationFailed, Toast.LENGTH_LONG).show();

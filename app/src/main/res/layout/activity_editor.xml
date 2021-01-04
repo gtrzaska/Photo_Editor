@@ -192,6 +192,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@android:color/transparent" />
+
+        <ProgressBar
+            android:id="@+id/editProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ivEditedPhoto"
+            app:layout_constraintStart_toStartOf="@+id/ivEditedPhoto"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
@@ -227,7 +241,7 @@
                     android:layout_weight="1"
                     android:background="#02FDFDFD"
                     android:drawableTop="@drawable/resize"
-                    android:text="@string/crop"
+                    android:text="@string/Modify"
                     android:textColor="#F8F7F1F1"
                     android:textSize="12sp" />
 
@@ -335,16 +349,6 @@
                 android:background="#00FFFFFF"
                 android:drawableTop="@drawable/flip_vertical"
                 android:text="@string/vertical"
-                android:textColor="#F8F7F1F1" />
-
-            <Button
-                android:id="@+id/btCrop"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="#00FFFFFF"
-                android:drawableTop="@drawable/crop"
-                android:text="@string/crop"
                 android:textColor="#F8F7F1F1" />
 
 
