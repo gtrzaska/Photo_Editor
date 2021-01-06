@@ -78,19 +78,19 @@ public class AuthenticationActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(AuthenticationActivity.this, R.string.RegistrationSuccessful, Toast.LENGTH_LONG).show();
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            assert user != null;
                             user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Log.i("Success", "Yes");
+                                        Toast.makeText(AuthenticationActivity.this, R.string.SendingEmailSucceed, Toast.LENGTH_LONG).show();
                                     } else {
-                                        Log.i("Success", "No");
+                                        Toast.makeText(AuthenticationActivity.this, R.string.SendingEmailFailed, Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {
-                            //Toast.makeText(AuthenticationActivity.this, R.string.RegistrationFailed, Toast.LENGTH_LONG).show();
                             Toast.makeText(AuthenticationActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                         progressBar.setVisibility(View.INVISIBLE);
@@ -129,7 +129,6 @@ public class AuthenticationActivity extends AppCompatActivity {
                             Toast.makeText(AuthenticationActivity.this, R.string.LoginSuccessful, Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {
-                            //Toast.makeText(AuthenticationActivity.this, R.string.RegistrationFailed, Toast.LENGTH_LONG).show();
                             Toast.makeText(AuthenticationActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                         progressBar.setVisibility(View.INVISIBLE);

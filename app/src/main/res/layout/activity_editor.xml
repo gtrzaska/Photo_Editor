@@ -489,7 +489,7 @@
                 android:drawableTop="@drawable/binarybw"
                 android:text="@string/binaryBW"
                 android:textColor="#F8F7F1F1"
-                android:textSize="12sp" />
+                android:textSize="10sp" />
 
             <Button
                 android:id="@+id/btSwapping"
@@ -510,6 +510,16 @@
                 android:text="@string/yuv"
                 android:textColor="#F8F7F1F1"
                 android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btBlur"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:background="#00090808"
+                android:drawableTop="@drawable/blur"
+                android:text="@string/blur"
+                android:textColor="#F8F7F1F1"
+                android:textSize="10sp" />
 
         </LinearLayout>
     </HorizontalScrollView>

@@ -20,7 +20,7 @@ public class SaveImage {
         String path = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES).toString();
         OutputStream fOut = null;
-        File file = new File(path, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+        File file = new File(path, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg");
         try {
             fOut = new FileOutputStream(file);
         } catch (FileNotFoundException e) {

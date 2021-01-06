@@ -13,7 +13,6 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -152,18 +151,6 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
-
-        /*
-
-Did you try using the following code? It is use to send binary data to other apps.
-
-Intent shareIntent = new Intent();
-shareIntent.setAction(Intent.ACTION_SEND);
-shareIntent.putExtra(Intent.EXTRA_STREAM, uriToImage);
-shareIntent.setType("image/jpeg");
-startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
-
-         */
         View btSave = findViewById(R.id.btSave);
         btSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -257,7 +244,7 @@ startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.
                 if (isHsvFilterHidden) {
                     closeMenu();
                     isHsvFilterHidden = false;
-                    hsvFilter.setTranslationY((-1) * (hsvMenu.getHeight() + hsvFilter.getHeight() + 24));
+                    hsvFilter.setTranslationY((-1) * (hsvMenu.getHeight() + hsvFilter.getHeight() + 16));
                 } else {
                     isHsvFilterHidden = true;
                     hsvFilter.setTranslationY(0);
@@ -798,6 +785,9 @@ startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.
             case R.id.btRGB2YUV:
                 bitmap = ImageFilters.yuv(bitmap);
                 break;
+            case R.id.btBlur:
+                bitmap = ImageFilters.fastblur(bitmap, 10);
+                break;
             case R.id.btRotate:
                 bitmap = CropEditor.rotate(bitmap, 90);
                 adjustSizeOfBitmapToScreen();
@@ -819,8 +809,8 @@ startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bOut);
         byte[] data = bOut.toByteArray();
-        StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + ".png");
-        UploadTask uploadTask = fileReference.putBytes(data);
+        // StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + ".png");
+        // UploadTask uploadTask = fileReference.putBytes(data);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(EditorActivity.this);
         builder.setTitle("Ustawić jako publiczne?");
@@ -843,10 +833,14 @@ startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.
 
         alert.show();
 
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+
+        StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + ".png");
+        UploadTask uploadTask = fileReference.putBytes(data);
+
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -858,12 +852,13 @@ startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.
                             @Override
                             public void onSuccess(Uri uri) {
                                 String imageUrl = uri.toString();
-                                Upload upload = new Upload(FirebaseAuth.getInstance().getCurrentUser().getEmail(),
-                                        imageUrl, isPublic, 0);
+                                Upload upload = new Upload(FirebaseAuth.getInstance().
+                                        getCurrentUser().getEmail(), imageUrl, isPublic, 0);
                                 String uploadId = mDatabaseRef.push().getKey();
                                 mDatabaseRef.child(uploadId).setValue(upload);
                                 progressBar.setVisibility(View.INVISIBLE);
-                                Toast.makeText(EditorActivity.this, R.string.uploadSuccessful, Toast.LENGTH_LONG).show();
+                                Toast.makeText(EditorActivity.this,
+                                        R.string.uploadSuccessful, Toast.LENGTH_LONG).show();
                             }
                         });
                     }

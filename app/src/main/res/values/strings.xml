@@ -46,4 +46,9 @@
     <string name="SignUp">Rejestracja</string>
     <string name="signIn">Logownie</string>
     <string name="Saved">Zapisano!</string>
+    <string name="SendingEmailSucceed">Wysłano maila potwierdzającego</string>
+    <string name="SendingEmailFailed">Błąd podczas wysyłania maila</string>
+    <string name="blur">rozmazanie</string>
+    <string name="myImages">Moje</string>
+    <string name="allImages">Wszystkie</string>
 </resources>

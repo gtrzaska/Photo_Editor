@@ -30,10 +30,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class CollageCreator extends AppCompatActivity {
+public class CollageCreatorActivity extends AppCompatActivity {
 
     private ArrayList<HashMap<String, Integer>> hashMap = new ArrayList<HashMap<String, Integer>>();
     private ImageView iv;
+    private ImageView saveCollage;
     private static final int CAMERA_REQUEST = 200;
     private static final int PICK_IMAGE = 100;
     Uri photoURI;
@@ -47,10 +48,23 @@ public class CollageCreator extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         int pickedCollage = bundle.getInt("pickedCollage", 1);
         hashMap = CollageMapCreator.CollageHashMap(pickedCollage, screenwidth, screenheight);
-        FrameLayout _linear = (FrameLayout) findViewById(R.id.collageLinear);
+        final FrameLayout _linear = (FrameLayout) findViewById(R.id.collageLinear);
         ImageView imageView;
+        saveCollage = findViewById(R.id.zapiszkolaz);
+        saveCollage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    _linear.setDrawingCacheEnabled(true);
+                    Bitmap bitmap = Bitmap.createBitmap(_linear.getDrawingCache());
+                    _linear.setDrawingCacheEnabled(false);
+                    SaveImage.saveBitmap(bitmap);
+                }
+            }
+        });
+
         for (int i = 0; i < hashMap.size(); i++) {
-            imageView = new ImageView(CollageCreator.this);
+            imageView = new ImageView(CollageCreatorActivity.this);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(hashMap.get(i).get("width"), hashMap.get(i).get("height"));
             imageView.setLayoutParams(layoutParams);
@@ -63,6 +77,7 @@ public class CollageCreator extends AppCompatActivity {
 
         }
 
+
         final String[] imageSource = {"Galeria", "Kamera"};
         for (int j = 0; j < _linear.getChildCount(); j++) {
 
@@ -70,7 +85,7 @@ public class CollageCreator extends AppCompatActivity {
                                                          @Override
                                                          public void onClick(View view) {
                                                              iv = (ImageView) view;
-                                                             AlertDialog.Builder alert = new AlertDialog.Builder(CollageCreator.this);
+                                                             AlertDialog.Builder alert = new AlertDialog.Builder(CollageCreatorActivity.this);
                                                              alert.setItems(imageSource, new DialogInterface.OnClickListener() {
                                                                  public void onClick(DialogInterface dialog, int ii) {
                                                                      if (ii == 0) {
@@ -80,22 +95,16 @@ public class CollageCreator extends AppCompatActivity {
                                                                      } else if (ii == 1) {
 
                                                                          Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                                                                         // Ensure that there's a camera activity to handle the intent
                                                                          if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                                                                             // Create the File where the photo should go
                                                                              File photoFile = null;
                                                                              try {
                                                                                  photoFile = createImageFile();
                                                                              } catch (IOException ex) {
-                                                                                 Log.d("----", ex.getMessage());
                                                                              }
-                                                                             // Continue only if the File was successfully created
                                                                              if (photoFile != null) {
-                                                                                 Log.d("----", "successfully created");
                                                                                  photoURI = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
                                                                                          BuildConfig.APPLICATION_ID + ".provider",
                                                                                          photoFile);
-
 
                                                                                  cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                                                                                  startActivityForResult(cameraIntent, CAMERA_REQUEST);
@@ -103,14 +112,6 @@ public class CollageCreator extends AppCompatActivity {
                                                                              }
                                                                          }
 
-
-
-/*
-                                                                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                                         //jesli jest dostepna zewnetrzny aparat
-                                                                         if (intent.resolveActivity(getPackageManager()) != null) {
-                                                                             startActivityForResult(intent, CAMERA_REQUEST);
-                                                                         }*/
                                                                      }
                                                                  }
                                                              });
@@ -149,33 +150,33 @@ public class CollageCreator extends AppCompatActivity {
         Bitmap bitmap = null;
         super.onActivityResult(requestCode, resultCode, data);
         //  if (data != null) {
-            if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
 
-                Uri imgData = data.getData();
-                InputStream stream = null;
-                try {
-                    stream = getContentResolver().openInputStream(imgData);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                Bitmap b = BitmapFactory.decodeStream(stream);
-                iv.setImageBitmap(b);
-                iv.setScaleType(ImageView.ScaleType.CENTER);
-            } else if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
-                Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
-                Log.d("----+", photoURI.toString());
-                //  Bundle extras = data.getExtras();
-                //Bitmap b = (Bitmap) extras.get("data");
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
-                    Log.d("----+", "hhj");
-                } catch (IOException e) {
-                    Log.d("----+", e.getMessage());
-                }
-                iv.setImageBitmap(bitmap);
-                //  iv.setImageBitmap(b);
-                iv.setScaleType(ImageView.ScaleType.CENTER);
+            Uri imgData = data.getData();
+            InputStream stream = null;
+            try {
+                stream = getContentResolver().openInputStream(imgData);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
+            Bitmap b = BitmapFactory.decodeStream(stream);
+            iv.setImageBitmap(b);
+            iv.setScaleType(ImageView.ScaleType.FIT_XY);
+        } else if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST) {
+            Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
+            Log.d("----+", photoURI.toString());
+            //  Bundle extras = data.getExtras();
+            //Bitmap b = (Bitmap) extras.get("data");
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
+                Log.d("----+", "hhj");
+            } catch (IOException e) {
+                Log.d("----+", e.getMessage());
+            }
+            iv.setImageBitmap(bitmap);
+            //  iv.setImageBitmap(b);
+            iv.setScaleType(ImageView.ScaleType.CENTER);
+        }
 
 
         //}

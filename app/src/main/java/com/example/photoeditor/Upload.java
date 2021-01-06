@@ -1,10 +1,13 @@
 package com.example.photoeditor;
 
+import com.google.firebase.database.Exclude;
+
 public class Upload {
     private String mUser;
     private String mImageUrl;
     private boolean mIsPublic;
     private int mLikesNumber;
+    private String mKey;
 
     public Upload() {
 
@@ -47,6 +50,16 @@ public class Upload {
 
     public void setLikesNumber(int likesNumber) {
         mLikesNumber = likesNumber;
+    }
+
+    @Exclude
+    public String getKey() {
+        return mKey;
+    }
+
+    @Exclude
+    public void setKey(String key) {
+        mKey = key;
     }
 }
 
