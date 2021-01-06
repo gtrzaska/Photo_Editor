@@ -290,17 +290,6 @@
                     android:textSize="12sp" />
 
 
-                <Button
-                    android:id="@+id/btSticker"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="#00FFFFFF"
-                    android:drawableTop="@drawable/sticker"
-                    android:text="@string/sticker"
-                    android:textColor="#F8F7F1F1"
-                    android:textSize="12sp" />
-
             </LinearLayout>
         </HorizontalScrollView>
     </RelativeLayout>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "593948622180",
+    "firebase_url": "https://photoeditor-8f5d1-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "photoeditor-8f5d1",
+    "storage_bucket": "photoeditor-8f5d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593948622180:android:89dc08f243af59bfbb8e71",
+        "android_client_info": {
+          "package_name": "com.example.photoeditor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "593948622180-2dk50b60aik0ngbjsd1qcq07t9dfulrq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.photoeditor",
+            "certificate_hash": "3d4924385a2c8e19a330baed632db33c6614fa57"
+          }
+        },
+        {
+          "client_id": "593948622180-3rotd69l0nvpj0lbbiuf6lhv4opufcpa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBq_IStLuHfHTc0XCuSgv9gtR5lvBb4Ou0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "593948622180-3rotd69l0nvpj0lbbiuf6lhv4opufcpa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

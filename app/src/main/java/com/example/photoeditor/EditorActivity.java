@@ -359,7 +359,7 @@ public class EditorActivity extends AppCompatActivity implements View.OnClickLis
                 if (isHsvAdjustHidden) {
                     closeMenu();
                     isHsvAdjustHidden = false;
-                    hsvAdjust.setTranslationY((-2) * hsvAdjust.getHeight());
+                    hsvAdjust.setTranslationY((-2) * hsvAdjust.getHeight() - 4);
                 } else {
                     isHsvAdjustHidden = true;
                     hsvAdjust.setTranslationY(0);

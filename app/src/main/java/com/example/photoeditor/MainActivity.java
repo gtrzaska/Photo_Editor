@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,8 +35,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        // LanguageHelper.changeLocale(getResources(), "pl");
         setContentView(R.layout.activity_main);
+        ImageView btLocale = findViewById(R.id.btLocaleChange);
+        if (String.valueOf(getResources().getConfiguration().locale).equals("en")) {
+            btLocale.setImageResource(R.drawable.pl);
+        } else {
+            btLocale.setImageResource(R.drawable.en);
+        }
         createDirectory();
         View btCamera = findViewById(R.id.btCamera);
         btCamera.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +71,33 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
+                }
+            }
+        });
+
+
+        btLocale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                {
+                    Log.d("------", String.valueOf(getResources().getConfiguration().locale));
+                    if (String.valueOf(getResources().getConfiguration().locale).equals("en")) {
+                        LanguageHelper.changeLocale(MainActivity.this.getResources(), "pl");
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(getIntent());
+                        overridePendingTransition(0, 0);
+                        ;
+
+                    } else {
+                        LanguageHelper.changeLocale(MainActivity.this.getResources(), "en");
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(getIntent());
+                        overridePendingTransition(0, 0);
+                    }
+
+                    Log.d("------", String.valueOf(getResources().getConfiguration().locale));
                 }
             }
         });

@@ -7,6 +7,16 @@
     android:background="#FFFFFF"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/btLocaleChange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/en" />
+
     <ImageButton
         android:id="@+id/btAuth"
         android:layout_width="wrap_content"
@@ -96,7 +106,7 @@
                 android:background="@drawable/circle"
                 android:drawableTop="@drawable/cloud"
                 android:paddingTop="35dp"
-                android:text="Chmura"
+                android:text="@string/cloud"
                 android:textColor="#fff" />
 
         </LinearLayout>
