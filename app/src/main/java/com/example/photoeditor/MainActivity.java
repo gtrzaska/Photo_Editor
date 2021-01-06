@@ -43,16 +43,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    // Ensure that there's a camera activity to handle the intent
                     if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                        // Create the File where the photo should go
                         File photoFile = null;
                         try {
                             photoFile = createImageFile();
                         } catch (IOException ex) {
 
                         }
-                        // Continue only if the File was successfully created
                         if (photoFile != null) {
                             photoURI = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
                                     BuildConfig.APPLICATION_ID + ".provider",
@@ -100,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
                             builder.setTitle("Wylogować?");
-
                             builder.setPositiveButton("Tak", new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface dialog, int which) {
@@ -112,17 +107,13 @@ public class MainActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             });
-
                             builder.setNegativeButton("Nie", new DialogInterface.OnClickListener() {
 
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-                                    // Do nothing
                                     dialog.dismiss();
                                 }
                             });
-
                             AlertDialog alert = builder.create();
                             alert.show();
                         } else {
@@ -144,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
                 {
                     if (isOnline()) {
                         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                            Intent intent = new Intent(MainActivity.this, ImagesActivity.class);
+                            startActivity(intent);
 
                         } else {
                             Toast.makeText(MainActivity.this, R.string.noLogged, Toast.LENGTH_SHORT).show();
@@ -185,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap bitmap = null;
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
-            Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
                 Intent intent = new Intent(MainActivity.this, EditorActivity.class);

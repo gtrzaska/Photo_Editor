@@ -3,6 +3,7 @@ package com.example.photoeditor;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -76,9 +77,20 @@ public class AuthenticationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(AuthenticationActivity.this, R.string.RegistrationSuccessful, Toast.LENGTH_LONG).show();
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            assert user != null;
+                            user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(AuthenticationActivity.this, R.string.SendingEmailSucceed, Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(AuthenticationActivity.this, R.string.SendingEmailFailed, Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {
-                            //Toast.makeText(AuthenticationActivity.this, R.string.RegistrationFailed, Toast.LENGTH_LONG).show();
                             Toast.makeText(AuthenticationActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                         progressBar.setVisibility(View.INVISIBLE);
@@ -117,7 +129,6 @@ public class AuthenticationActivity extends AppCompatActivity {
                             Toast.makeText(AuthenticationActivity.this, R.string.LoginSuccessful, Toast.LENGTH_LONG).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         } else {
-                            //Toast.makeText(AuthenticationActivity.this, R.string.RegistrationFailed, Toast.LENGTH_LONG).show();
                             Toast.makeText(AuthenticationActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                         progressBar.setVisibility(View.INVISIBLE);

@@ -4,6 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/zapiszkolaz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#E4413D3D"
+            android:src="@drawable/camera" />
+
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -11,18 +25,5 @@
         android:background="@color/black"
         android:layout_weight="1">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100px"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:src="@drawable/camera"
-                android:id="@+id/zapiszkolaz" />
-
-        </LinearLayout>
     </FrameLayout>
 </LinearLayout>

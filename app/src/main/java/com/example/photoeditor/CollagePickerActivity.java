@@ -61,7 +61,7 @@ public class CollagePickerActivity extends AppCompatActivity {
     }
 
     private void goToCollageCreator() {
-        Intent intent = new Intent(CollagePickerActivity.this, CollageCreator.class);
+        Intent intent = new Intent(CollagePickerActivity.this, CollageCreatorActivity.class);
         intent.putExtra("pickedCollage", pickedCollage);
         startActivity(intent);
     }

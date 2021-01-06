@@ -2,7 +2,7 @@
     <string name="app_name">PhotoEditor</string>
     <string name="library">Katalog</string>
     <string name="camera">Kamera</string>
-    <string name="crop">Przytnij</string>
+    <string name="Modify">Przekształć</string>
     <string name="filter">Filtr</string>
     <string name="rotate">Obróć</string>
     <string name="horizontal">Horyzont</string>
@@ -43,4 +43,12 @@
     <string name="LoginSuccessful">Zalogowano</string>
     <string name="SignOutSuccessful">Wylogowano</string>
     <string name="noLogged">Nie zalogowano</string>
+    <string name="SignUp">Rejestracja</string>
+    <string name="signIn">Logownie</string>
+    <string name="Saved">Zapisano!</string>
+    <string name="SendingEmailSucceed">Wysłano maila potwierdzającego</string>
+    <string name="SendingEmailFailed">Błąd podczas wysyłania maila</string>
+    <string name="blur">rozmazanie</string>
+    <string name="myImages">Moje</string>
+    <string name="allImages">Wszystkie</string>
 </resources>

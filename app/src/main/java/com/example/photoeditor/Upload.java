@@ -1,24 +1,31 @@
 package com.example.photoeditor;
 
+import com.google.firebase.database.Exclude;
+
 public class Upload {
-    private String mName;
+    private String mUser;
     private String mImageUrl;
+    private boolean mIsPublic;
+    private int mLikesNumber;
+    private String mKey;
 
     public Upload() {
 
     }
 
-    public Upload(String name, String imageUrl) {
-        mName = name;
+    public Upload(String user, String imageUrl, boolean isPublic, int likesNumber) {
+        mUser = user;
         mImageUrl = imageUrl;
+        mIsPublic = isPublic;
+        mLikesNumber = likesNumber;
     }
 
-    public String getName() {
-        return mName;
+    public String getUser() {
+        return mUser;
     }
 
-    public void setName(String name) {
-        mName = name;
+    public void setUser(String user) {
+        mUser = user;
     }
 
     public String getImageUrl() {
@@ -28,4 +35,31 @@ public class Upload {
     public void setImageUrl(String imageUrl) {
         mImageUrl = imageUrl;
     }
+
+    public boolean getIsPublic() {
+        return mIsPublic;
+    }
+
+    public void setIsPublic(boolean isPublic) {
+        mIsPublic = isPublic;
+    }
+
+    public int getLikesNumber() {
+        return mLikesNumber;
+    }
+
+    public void setLikesNumber(int likesNumber) {
+        mLikesNumber = likesNumber;
+    }
+
+    @Exclude
+    public String getKey() {
+        return mKey;
+    }
+
+    @Exclude
+    public void setKey(String key) {
+        mKey = key;
+    }
 }
+

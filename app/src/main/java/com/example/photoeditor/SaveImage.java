@@ -15,23 +15,24 @@ import java.util.Date;
 
 public class SaveImage {
 
-    public static Boolean saveBitmap(Bitmap src) {
+    public static File saveBitmap(Bitmap src) {
 
-        String path = Environment.getExternalStorageDirectory().toString();
+        String path = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).toString();
         OutputStream fOut = null;
-        File file = new File(path, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+        File file = new File(path, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".jpg");
         try {
             fOut = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        src.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+        src.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
         try {
             fOut.flush();
             fOut.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return file;
     }
 }
